@@ -1,0 +1,79 @@
+Act as an expert frontend developer. I have an existing static website built in Replit from a Figma design. Your task is to make this website functional by implementing the frontend logic for a project called "MealMatch" based on the workflow I will provide. The design must not be changed.
+
+The core concept of MealMatch is a monthly meal subscription service connecting students with local home cooks. Your primary focus is to implement the user workflow while making the code clean and easy for my backend team to integrate later.
+
+Key Technical Requirements:
+
+Language: Use JavaScript (ES6+) and JSX. Do not use TypeScript.
+
+Framework: Use React. Build the application with functional components and Hooks (e.g., useState, useEffect, useContext).
+
+Routing: Use react-router-dom to handle navigation between pages.
+
+Backend Separation: This is critical. Do not write any backend code.
+
+Create a dedicated file named src/mockData.js to store all placeholder data (list of cooks, menus, user profiles, etc.).
+
+Simulate user authentication and state changes purely on the frontend.
+
+In the code, add comments like // TODO: API Integration - Connect to backend endpoint wherever data would normally be fetched from or sent to a server.
+
+Project Implementation Plan:
+
+1. Create the Mock Data (src/mockData.js)
+First, create realistic mock data for at least 3-4 cooks based in Coimbatore. Each cook object should have:
+
+id, name, specialty (e.g., "Authentic Kongu Cuisine"), isVeg, rating, profileImage, address (a locality in Coimbatore like R.S. Puram or Saibaba Colony).
+
+A monthlyMenu array of objects, where each object is a meal with day and dish.
+
+A reviews array of objects with a name, rating, and comment.
+
+2. Adapt Existing Components and Create New Pages
+Based on the existing design, adapt the components and build the necessary pages to bring the workflow to life.
+
+Homepage (HomePage.js):
+
+The main section that looks like "Our Restaurants" should be repurposed. Change its title to "Nearby Cooks."
+
+Each card in this section will now be a CookCard component, displaying a cook's photo, name, specialty, and rating from the mock data. Clicking a card should navigate to that cook's profile page.
+
+Login/Registration Page (LoginPage.js):
+
+Create a single page for both registration and login.
+
+Include tabs or radio buttons to select a role: "Student" or "Cook."
+
+Have simple forms for email/password. On submit, simulate a login by setting a global state (using React Context) and redirecting to the appropriate dashboard.
+
+Cook Profile Page (CookProfilePage.js):
+
+This new page opens when a user clicks a CookCard.
+
+Use the URL parameter (e.g., /cook/1) to fetch the specific cook's details from mockData.js.
+
+Display all cook details: photo, name, address, and reviews.
+
+Show the cook's full Monthly Menu in a clear table or list format.
+
+Include a prominent "Subscribe Now for ₹X / month" button.
+
+Student Dashboard (StudentDashboard.js):
+
+This is a private page for logged-in students.
+
+Show a section for "My Subscription" with details of the cook they are subscribed to (use mock data to show an active subscription).
+
+Include a "Food Tracking" section with a simulated status like "Your lunch from Priya's Kitchen is on its way!"
+
+Cook Dashboard (CookDashboard.js):
+
+This is a private page for logged-in cooks.
+
+Display the cook's own profile information.
+
+Show a section titled "My Subscribers" which lists the students (from mock data) who have subscribed to them.
+
+Include an "Order Notifications" section with mock notifications like "Rahul has just subscribed!"
+
+Please begin by creating the src/mockData.js file with realistic Coimbatore-based data. Then, adapt the homepage to display the "Nearby Cooks" using this mock data.
