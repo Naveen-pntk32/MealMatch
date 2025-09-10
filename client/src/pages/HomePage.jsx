@@ -1,6 +1,6 @@
 // Homepage for MealMatch - Monthly meal subscription service
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowRightIcon,
   ChevronDownIcon,
@@ -8,126 +8,295 @@ import {
   SearchIcon,
   SendIcon,
   StarIcon,
-} from 'lucide-react';
-import { Badge } from '../components/ui/badge';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { useAuth } from '../context/AuthContext';
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "lucide-react";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { useAuth } from "../context/AuthContext";
 
 // Import mock data
 // TODO: API Integration - Replace mock data with real API calls
-import { cooks } from '../mockData.js';
+import { cooks } from "../mockData.js";
 
 // Import existing sections
-import { AboutUsSection } from './sections/AboutUsSection';
-import { CustomerTestimonialsSection } from './sections/CustomerTestimonialsSection';
-import { DeliveryPartnerSection } from './sections/DeliveryPartnerSection';
-import { FeaturedDishesSection } from './sections/FeaturedDishesSection';
-import { MenuSection } from './sections/MenuSection';
+import { AboutUsSection } from "./sections/AboutUsSection";
+import { CustomerTestimonialsSection } from "./sections/CustomerTestimonialsSection";
+import { DeliveryPartnerSection } from "./sections/DeliveryPartnerSection";
+import { FeaturedDishesSection } from "./sections/FeaturedDishesSection";
+import { MenuSection } from "./sections/MenuSection";
+import FeaturedDishCard from "../components/DishCard.jsx";
 
 const navigationItems = [
-  { label: 'Services', hasDropdown: true },
-  { label: 'Menu', hasDropdown: true },
-  { label: 'Contact', hasDropdown: false },
+  { label: "Services", hasDropdown: true },
+  { label: "Menu", hasDropdown: true },
+  { label: "Contact", hasDropdown: false },
 ];
 
 const menuCategories = [
-  { name: 'Tiffin Items', icon: '/figmaAssets/2450-1.png' },
-  { name: 'Biryani', icon: '/figmaAssets/image-2.png', active: true },
-  { name: 'Non Veg Gravy', icon: '/figmaAssets/6-07-1.png' },
-  { name: 'Meals', icon: '/figmaAssets/3-01.png' },
-  { name: 'Variety Rice', icon: '/figmaAssets/28-15.png' },
+  {
+    name: "Tiffin Items",
+    icon: "/figmaAssets/2450-1.png",
+    dishes: [
+      {
+        id: 1,
+        name: "Masala Dosa",
+        price: "₹80",
+        image: "/figmaAssets/frame-14-1.png",
+      },
+      {
+        id: 2,
+        name: "Idli Sambar",
+        price: "₹60",
+        image: "/figmaAssets/frame-14-2.png",
+      },
+      {
+        id: 3,
+        name: "Pongal",
+        price: "₹70",
+        image: "/figmaAssets/frame-15.png",
+      },
+    ],
+  },
+  {
+    name: "Biryani",
+    icon: "/figmaAssets/image-2.png",
+    dishes: [
+      {
+        id: 4,
+        name: "Hyderabadi Biryani",
+        price: "₹150",
+        image: "/figmaAssets/frame-14-2.png",
+      },
+      {
+        id: 5,
+        name: "Seeraga Samba",
+        price: "₹200",
+        image: "/figmaAssets/frame-15.png",
+      },
+      {
+        id: 6,
+        name: "Chicken Biryani",
+        price: "₹180",
+        image: "/figmaAssets/frame-14-1.png",
+      },
+    ],
+  },
+  {
+    name: "Non Veg Gravy",
+    icon: "/figmaAssets/6-07-1.png",
+    dishes: [
+      {
+        id: 7,
+        name: "Chicken Curry",
+        price: "₹120",
+        image: "/figmaAssets/frame-14-1.png",
+      },
+      {
+        id: 8,
+        name: "Mutton Gravy",
+        price: "₹180",
+        image: "/figmaAssets/frame-14-2.png",
+      },
+      {
+        id: 9,
+        name: "Fish Curry",
+        price: "₹140",
+        image: "/figmaAssets/frame-15.png",
+      },
+    ],
+  },
+  {
+    name: "Meals",
+    icon: "/figmaAssets/3-01.png",
+    dishes: [
+      {
+        id: 10,
+        name: "South Indian Thali",
+        price: "₹100",
+        image: "/figmaAssets/frame-14-1.png",
+      },
+      {
+        id: 11,
+        name: "North Indian Thali",
+        price: "₹120",
+        image: "/figmaAssets/frame-14-2.png",
+      },
+      {
+        id: 12,
+        name: "Special Thali",
+        price: "₹150",
+        image: "/figmaAssets/frame-15.png",
+      },
+    ],
+  },
+  {
+    name: "Variety Rice",
+    icon: "/figmaAssets/28-15.png",
+    dishes: [
+      {
+        id: 13,
+        name: "Coconut Rice",
+        price: "₹80",
+        image: "/figmaAssets/frame-14-1.png",
+      },
+      {
+        id: 14,
+        name: "Lemon Rice",
+        price: "₹70",
+        image: "/figmaAssets/frame-14-2.png",
+      },
+      {
+        id: 15,
+        name: "Tomato Rice",
+        price: "₹75",
+        image: "/figmaAssets/frame-15.png",
+      },
+    ],
+  },
 ];
 
 const customerImages = [
-  '/figmaAssets/ellipse-5.svg',
-  '/figmaAssets/ellipse-6.png',
-  '/figmaAssets/ellipse-7.png',
+  "/figmaAssets/ellipse-5.svg",
+  "/figmaAssets/ellipse-6.png",
+  "/figmaAssets/ellipse-7.png",
 ];
 
 const footerSections = [
   {
-    title: 'About',
-    links: ['About Us', 'Features', 'News', 'Menu'],
+    title: "About",
+    links: ["About Us", "Features", "News", "Menu"],
   },
   {
-    title: 'Company',
-    links: ['Why MealMatch?', 'Partner With Us', 'FAQ', 'Blog'],
+    title: "Company",
+    links: ["Why MealMatch?", "Partner With Us", "FAQ", "Blog"],
   },
   {
-    title: 'Support',
+    title: "Support",
     links: [
-      'Account',
-      'Support Center',
-      'Feedback',
-      'Contact Us',
-      'Accessibilty',
+      "Account",
+      "Support Center",
+      "Feedback",
+      "Contact Us",
+      "Accessibilty",
     ],
   },
 ];
 
 const socialIcons = [
-  { icon: '/figmaAssets/bx-bxl-instagram-alt.svg', alt: 'Instagram' },
-  { icon: '/figmaAssets/bx-bxl-facebook.svg', alt: 'Facebook' },
-  { icon: '/figmaAssets/akar-icons-twitter-fill.svg', alt: 'Twitter' },
+  { name: "Facebook", icon: "/figmaAssets/bx-bxl-facebook.svg" },
+  { name: "Instagram", icon: "/figmaAssets/bx-bxl-instagram-alt.svg" },
+  { name: "Twitter", icon: "/figmaAssets/akar-icons-twitter-fill.svg" },
 ];
 
 // Cook Card Component
 const CookCard = ({ cook }) => {
   const navigate = useNavigate();
 
-  const handleCookClick = () => {
-    // TODO: API Integration - Track cook card clicks for analytics
+  const handleViewProfile = () => {
+    // Navigate to cook profile page
     navigate(`/cook/${cook.id}`);
   };
 
   return (
-    <Card 
-      className="w-[273px] h-[508px] rounded-[30px] overflow-hidden bg-cover bg-center cursor-pointer hover:transform hover:scale-105 transition-transform duration-300"
-      style={{
-        backgroundImage: `linear-gradient(359deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.21) 42%,rgba(0,0,0,0) 100%), url(${cook.profileImage})`
-      }}
-      onClick={handleCookClick}
-    >
-      <CardContent className="p-6 h-full flex flex-col justify-end">
-        <div className="mb-4">
-          <div className="bg-[#28b26f] rounded-[20px] px-6 py-2 inline-flex items-center gap-2 mb-8">
-            <span className="font-bold text-white text-xl">
-              {cook.rating}
-            </span>
-            <StarIcon className="w-[25px] h-6 fill-white text-white" />
-          </div>
-          {cook.isVeg && (
-            <Badge className="bg-green-100 text-green-800 mb-4">
-              Pure Veg
-            </Badge>
-          )}
+    <Card className="w-[280px] h-[400px] rounded-[30px] overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <CardContent className="p-0 h-full relative">
+        {/* Profile Image */}
+        <div className="w-full h-[200px] overflow-hidden">
+          <img
+            className="w-full h-full object-cover"
+            alt={cook.name}
+            src={cook.profileImage}
+          />
         </div>
 
-        <h3 className="font-medium text-white text-[28px] mb-2">
-          {cook.name}
-        </h3>
-        
-        <p className="font-medium text-white/90 text-sm mb-2">
-          {cook.specialty}
-        </p>
-        
-        <p className="font-medium text-white/80 text-xs mb-4">
-          {cook.address}
-        </p>
+        {/* Cook Info */}
+        <div className="p-6 flex flex-col justify-between h-[200px]">
+          <div>
+            <h3 className="font-bold text-[#010f1c] text-xl mb-2">
+              {cook.name}
+            </h3>
+            <p className="font-medium text-[#28b26f] text-sm mb-2">
+              {cook.specialty}
+            </p>
+            <p className="font-medium text-gray-600 text-sm mb-3">
+              {cook.address}
+            </p>
 
-        <div className="flex items-center justify-between">
-          <div className="text-white">
-            <span className="text-sm">From </span>
-            <span className="font-bold text-lg">₹{cook.monthlyPrice}/month</span>
+            {/* Rating */}
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <StarIcon
+                    key={i}
+                    className={`w-4 h-4 ${
+                      i < Math.floor(cook.rating)
+                        ? "text-yellow-400 fill-current"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="font-medium text-gray-600 text-sm">
+                {cook.rating}
+              </span>
+            </div>
+
+            {/* Price */}
+            <p className="font-bold text-[#28b26f] text-lg">
+              ₹{cook.monthlyPrice}/month
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-white text-sm">
-              View Menu
-            </span>
-            <ArrowRightIcon className="w-4 h-4 text-white" />
+
+          {/* View Button */}
+          <Button
+            onClick={handleViewProfile}
+            className="w-full bg-[#28b26f] hover:bg-[#28b26f]/90 text-white font-medium py-2 rounded-[25px]"
+          >
+            View Menu
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Dish Card Component
+const DishCard = ({ dish }) => {
+  const handleOrderNow = () => {
+    alert(`Added ${dish.name} to cart!`);
+  };
+
+  return (
+    <Card className="w-[200px] h-[250px] rounded-[20px] overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
+      <CardContent className="p-0 h-full relative">
+        {/* Dish Image */}
+        <div className="w-full h-[120px] overflow-hidden">
+          <img
+            className="w-full h-full object-cover"
+            alt={dish.name}
+            src={dish.image}
+          />
+        </div>
+
+        {/* Dish Info */}
+        <div className="p-4 flex flex-col justify-between h-[130px]">
+          <div>
+            <h4 className="font-bold text-[#010f1c] text-sm mb-1">
+              {dish.name}
+            </h4>
+            <p className="font-bold text-[#28b26f] text-lg">{dish.price}</p>
           </div>
+
+          {/* Order Button */}
+          <Button
+            onClick={handleOrderNow}
+            className="w-full bg-[#28b26f] hover:bg-[#28b26f]/90 text-white font-medium py-1 text-xs rounded-[15px]"
+          >
+            Order Now
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -137,23 +306,41 @@ const CookCard = ({ cook }) => {
 const HomePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [selectedCategory, setSelectedCategory] = useState(1); // Default to Biryani
+  const [cookScrollPosition, setCookScrollPosition] = useState(0);
 
   const handleLoginClick = () => {
     if (user) {
       // Redirect to appropriate dashboard
-      const dashboardPath = user.role === 'student' ? '/student/dashboard' : '/cook/dashboard';
+      const dashboardPath =
+        user.role === "student" ? "/student/dashboard" : "/cook/dashboard";
       navigate(dashboardPath);
     } else {
-      navigate('/login');
+      navigate("/login");
     }
   };
 
+  const handleCategorySelect = (index) => {
+    setSelectedCategory(index);
+  };
+
+  const scrollCooks = (direction) => {
+    const scrollAmount = 300;
+    const newPosition =
+      direction === "left"
+        ? Math.max(0, cookScrollPosition - scrollAmount)
+        : cookScrollPosition + scrollAmount;
+    setCookScrollPosition(newPosition);
+  };
+
+  const selectedCategoryData = menuCategories[selectedCategory];
+
   return (
     <div className="bg-white w-full min-h-screen">
-      <div className="bg-white w-full max-w-[1440px] mx-auto relative">
+      <div className="bg-white w-full max-w-[1200px] mx-auto relative px-4">
         {/* Header Section */}
-        <header className="relative w-full px-4 py-4">
-          <div className="flex items-center justify-between max-w-[1307px] mx-auto">
+        <header className="relative w-full py-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img
                 className="w-[193px] h-[156px] object-cover"
@@ -176,129 +363,65 @@ const HomePage = () => {
             </nav>
 
             <div className="flex items-center gap-4">
-              <SearchIcon className="w-[22px] h-[22px]" />
-              <img
-                className="w-[26px] h-[25px]"
-                alt="Cart"
-                src="/figmaAssets/group-2.png"
-              />
-              <Button 
-                className="bg-[#28b26f] hover:bg-[#28b26f]/90 rounded-[50px] px-5 py-[11px] h-auto"
-                onClick={handleLoginClick}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-12 h-12 rounded-full"
               >
-                <LogInIcon className="w-4 h-4 mr-2" />
-                <span className="font-medium text-white text-sm">
-                  {user ? 'Dashboard' : 'Login'}
-                </span>
+                <SearchIcon className="w-5 h-5" />
+              </Button>
+              <Button
+                onClick={handleLoginClick}
+                className="bg-[#28b26f] hover:bg-[#28b26f]/90 text-white px-6 py-2 rounded-[25px] flex items-center gap-2"
+              >
+                <LogInIcon className="w-4 h-4" />
+                {user ? "Dashboard" : "Login"}
               </Button>
             </div>
           </div>
         </header>
 
         {/* Hero Section */}
-        <section className="relative px-4 py-8">
-          <div className="max-w-[1307px] mx-auto relative">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <Badge className="bg-[#28b26f4c] text-black hover:bg-[#28b26f4c] rounded-[50px] px-5 py-[11px] h-auto mb-8">
-                  <span className="font-medium text-[15px]">
-                    More than Faster
-                  </span>
-                </Badge>
+        <section className="relative py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <Badge className="bg-[#28b26f4c] text-black hover:bg-[#28b26f4c] rounded-[50px] px-5 py-[11px] h-auto mb-8">
+                <span className="font-medium text-[15px]">
+                  More than Faster
+                </span>
+              </Badge>
 
-                <h1 className="font-bold text-[48px] leading-[60px] text-[#010f1c] mb-4">
-                  Connect with Local <br />
-                  <span className="text-[#28b26f]">Home Cooks</span>
-                </h1>
-                
-                <p className="font-medium text-gray-600 text-lg mb-8 max-w-[500px]">
-                  Monthly meal subscriptions from verified home cooks in Coimbatore. 
-                  Fresh, homemade meals delivered to your doorstep.
-                </p>
+              <h1 className="font-bold text-[48px] leading-[60px] text-[#010f1c] mb-4">
+                Connect with Local <br />
+                <span className="text-[#28b26f]">Home Cooks</span>
+              </h1>
 
-                <div className="mt-8">
-                  <div className="flex items-center gap-4 mb-4">
-                    {customerImages.map((src, index) => (
-                      <img
-                        key={index}
-                        className="w-16 h-16 rounded-full"
-                        alt="Customer"
-                        src={src}
-                      />
-                    ))}
-                  </div>
+              <p className="font-medium text-gray-600 text-lg mb-8 max-w-[500px]">
+                Monthly meal subscriptions from verified home cooks in
+                Coimbatore. Fresh, homemade meals delivered to your doorstep.
+              </p>
 
-                  <div className="mb-4">
-                    <h3 className="font-semibold text-black text-[17px] mb-2">
-                      Our Happy Students
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <StarIcon className="w-[18px] h-[18px] fill-yellow-400 text-yellow-400" />
-                      <span className="font-medium text-black text-[15px]">
-                        4.8
-                      </span>
-                      <span className="font-medium text-gray-500 text-[15px]">
-                        (2.5k Reviews)
-                      </span>
-                    </div>
-                  </div>
-                </div>
+              <div className="mt-8">
+                <Button className="bg-[#28b26f] hover:bg-[#28b26f]/90 text-white px-8 py-3 rounded-[25px] font-medium text-lg flex items-center gap-2">
+                  Get Started
+                  <ArrowRightIcon className="w-5 h-5" />
+                </Button>
               </div>
+            </div>
 
-              <div className="flex-1 relative">
-                <img
-                  className="w-[669px] h-[650px] object-cover"
-                  alt="Food"
-                  src="/figmaAssets/3-01.png"
-                />
-
-                <Card className="absolute bottom-8 right-8 w-[272px] bg-white rounded-[20px] shadow-[0px_4px_50px_#0000001a]">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <img
-                      className="w-[113px] h-[97px] object-cover rounded"
-                      alt="Monthly Meal"
-                      src="/figmaAssets/rectangle-1.svg"
-                    />
-                    <div>
-                      <h4 className="font-semibold text-black text-[15px] mb-2">
-                        Monthly Subscription
-                      </h4>
-                      <img
-                        className="w-[84px] h-3 mb-2"
-                        alt="Rating"
-                        src="/figmaAssets/group-6.png"
-                      />
-                      <div className="font-bold text-[10px]">
-                        <span className="text-[#eb0029]">₹ </span>
-                        <span className="text-black text-lg">3500</span>
-                        <span className="text-gray-500 text-sm">/month</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <img
-                  className="absolute top-8 left-8 w-[114px] h-[111px]"
-                  alt="Frame"
-                  src="/figmaAssets/frame-29.svg"
-                />
-
-                <img
-                  className="absolute top-32 right-0 w-[81px] h-[149px]"
-                  alt="Decoration"
-                  src="/figmaAssets/group-53.png"
-                />
-              </div>
+            <div className="flex-1 flex justify-center">
+              <img
+                className="w-[500px] h-[400px] object-cover"
+                alt="Hero Image"
+                src="/figmaAssets/image 46.png"
+              />
             </div>
           </div>
         </section>
 
-        {/* Customer Testimonials Section */}
-        <CustomerTestimonialsSection />
-
         {/* What We Serve Section */}
-        <section className="relative px-4 py-16">
-          <div className="max-w-[1440px] mx-auto text-center">
+        <section className="relative py-16">
+          <div className="text-center">
             <p className="font-semibold text-[#28b26f] text-lg tracking-[2.88px] mb-8">
               WHAT WE SERVE
             </p>
@@ -308,109 +431,139 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Nearby Cooks Section (Adapted from Restaurant List) */}
-        <section className="relative px-4 py-16">
-          <div className="max-w-[1440px] mx-auto">
-            <div className="text-center mb-16">
-              <p className="font-semibold text-[#28b26f] text-lg tracking-[2.88px] mb-4">
-                NEARBY COOKS
-              </p>
-              <h2 className="font-bold text-[#010f1c] text-[45px] leading-[60px] mb-8">
-                Discover Home Cooks in Coimbatore
-              </h2>
-              <p className="font-medium text-gray-600 text-lg max-w-[600px] mx-auto">
-                Connect with verified home cooks who prepare fresh, authentic meals. 
-                Each cook specializes in different cuisines and dietary preferences.
-              </p>
-            </div>
-
-            <div className="flex gap-8 justify-center flex-wrap">
-              {/* TODO: API Integration - Fetch cooks from backend API */}
-              {cooks.map((cook) => (
-                <CookCard key={cook.id} cook={cook} />
-              ))}
-            </div>
+        {/* MEAL CATEGORIES Section */}
+        <section className="relative py-8">
+          <div className="text-center mb-16">
+            <p className="font-semibold text-[#28b26f] text-lg tracking-[2.88px] mb-4">
+              MEAL CATEGORIES
+            </p>
+            <h2 className="font-bold text-[#010f1c] text-[45px] leading-[60px] mb-8">
+              Choose Your Favorite Cuisine
+            </h2>
+            <p className="font-medium text-gray-600 text-lg max-w-[600px] mx-auto">
+              Explore our diverse range of meal categories, each prepared by
+              expert home cooks with authentic recipes and fresh ingredients.
+            </p>
           </div>
-        </section>
 
-        {/* Menu Section Header */}
-        <section className="relative px-4 py-8">
-          <div className="max-w-[1440px] mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <p className="font-semibold text-[#28b26f] text-lg tracking-[2.88px] mb-4">
-                  MEAL CATEGORIES
-                </p>
-                <h2 className="font-bold text-[#010f1c] text-[45px] leading-[60px]">
-                  Variety That Always Satisfies Your Taste
-                </h2>
-              </div>
-              <div className="flex gap-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-16 h-16 rounded-full"
-                >
-                  <img
-                    className="w-8 h-8"
-                    alt="Previous"
-                    src="/figmaAssets/frame-48095867.svg"
+          <div className="flex gap-8">
+            {/* Category Buttons */}
+            <div className="w-[300px]">
+              <div className="relative">
+                <div className="absolute left-0 top-0 w-1.5 h-[400px] bg-gray-200 rounded-[20px]">
+                  <div
+                    className="h-[76px] bg-[#28b26f] rounded-[20px] transition-transform duration-300"
+                    style={{
+                      transform: `translateY(${selectedCategory * 80}px)`,
+                    }}
                   />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-16 h-16 rounded-full"
-                >
-                  <img
-                    className="w-8 h-8"
-                    alt="Next"
-                    src="/figmaAssets/frame-12.svg"
-                  />
-                </Button>
-              </div>
-            </div>
+                </div>
 
-            {/* Menu Categories */}
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-1.5 h-[573px] bg-gray-200 rounded-[20px]">
-                <div className="h-[76px] bg-[#28b26f] rounded-[20px]" />
-              </div>
-
-              <div className="ml-16 space-y-8">
-                {menuCategories.map((category, index) => (
-                  <div key={index} className="flex items-center gap-4">
-                    <div
-                      className={`flex items-center gap-4 px-6 py-4 rounded-[50px] ${
-                        category.active
-                          ? 'bg-[#28b26f] text-white w-[254px]'
-                          : 'text-black'
-                      }`}
-                    >
+                <div className="ml-16 space-y-8">
+                  {menuCategories.map((category, index) => (
+                    <div key={index} className="flex items-center gap-4">
                       <div
-                        className={`w-[52px] h-[52px] rounded-[30px] overflow-hidden ${
-                          category.active ? 'bg-white' : ''
+                        onClick={() => handleCategorySelect(index)}
+                        className={`flex items-center gap-4 px-6 py-4 rounded-[50px] cursor-pointer transition-all duration-300 ${
+                          selectedCategory === index
+                            ? "bg-[#28b26f] text-white w-[254px]"
+                            : "text-black hover:bg-gray-100"
                         }`}
                       >
-                        <img
-                          className="w-12 h-12 object-cover"
-                          alt={category.name}
-                          src={category.icon}
-                        />
+                        <div
+                          className={`w-[52px] h-[52px] rounded-[30px] overflow-hidden ${
+                            selectedCategory === index ? "bg-white" : ""
+                          }`}
+                        >
+                          <img
+                            className="w-12 h-12 object-cover"
+                            alt={category.name}
+                            src={category.icon}
+                          />
+                        </div>
+                        <span className="font-medium text-2xl">
+                          {category.name}
+                        </span>
                       </div>
-                      <span className="font-medium text-2xl">
-                        {category.name}
-                      </span>
                     </div>
-                  </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Dish Cards Display */}
+            <div className="flex-1 relative">
+              <div className="flex gap-6 flex-wrap">
+                {selectedCategoryData?.dishes.map((dish) => (
+                  <DishCard key={dish.id} dish={dish} />
                 ))}
+              </div>
+
+              {/* Featured Ghee Dosa Card - Positioned at bottom right */}
+              <div className="absolute bottom-0 right-0 z-10">
+                <FeaturedDishCard
+                  dishName="Ghee Dosa"
+                  price="₹40"
+                  rating={4}
+                  imageUrl="/figmaAssets/frame-14-1.png"
+                />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Featured Dishes Section */}
-        <FeaturedDishesSection />
+        {/* NEARBY COOKS Section */}
+        <section className="relative py-16">
+          <div className="text-center mb-16">
+            <p className="font-semibold text-[#28b26f] text-lg tracking-[2.88px] mb-4">
+              NEARBY COOKS
+            </p>
+            <h2 className="font-bold text-[#010f1c] text-[45px] leading-[60px] mb-8">
+              Discover Home Cooks in Coimbatore
+            </h2>
+            <p className="font-medium text-gray-600 text-lg max-w-[600px] mx-auto">
+              Connect with verified home cooks who prepare fresh, authentic
+              meals. Each cook specializes in different cuisines and dietary
+              preferences.
+            </p>
+          </div>
+
+          {/* Horizontal Scrolling Cook Cards */}
+          <div className="relative">
+            <div
+              className="flex gap-8 overflow-x-auto scrollbar-hide pb-4"
+              style={{ scrollLeft: cookScrollPosition }}
+            >
+              {/* Duplicate cooks for infinite scroll effect */}
+              {[...cooks, ...cooks].map((cook, index) => (
+                <div key={`${cook.id}-${index}`} className="flex-shrink-0">
+                  <CookCard cook={cook} />
+                </div>
+              ))}
+            </div>
+
+            {/* Scroll Buttons */}
+            <Button
+              onClick={() => scrollCooks("left")}
+              variant="outline"
+              size="icon"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg"
+            >
+              <ChevronLeftIcon className="w-6 h-6" />
+            </Button>
+            <Button
+              onClick={() => scrollCooks("right")}
+              variant="outline"
+              size="icon"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg"
+            >
+              <ChevronRightIcon className="w-6 h-6" />
+            </Button>
+          </div>
+        </section>
+
+        {/* Customer Testimonials Section */}
+        <CustomerTestimonialsSection />
 
         {/* Menu Section */}
         <MenuSection />
@@ -422,75 +575,107 @@ const HomePage = () => {
         <DeliveryPartnerSection />
 
         {/* Footer */}
-        <footer className="relative px-4 py-16 mt-16">
-          <div className="max-w-[1440px] mx-auto">
-            {/* Logo and Description */}
-            <div className="flex items-start gap-16 mb-16">
-              <div className="flex-1">
-                <div className="flex items-center gap-4 mb-8">
-                  <img
-                    className="w-[37px] h-11"
-                    alt="Logo"
-                    src="/figmaAssets/frame.svg"
-                  />
-                  <h2 className="font-semibold text-[#28b26f] text-[32px]">
-                    MealMatch
-                  </h2>
-                </div>
-                <p className="font-medium text-gray-600 text-base leading-[30px] max-w-[297px]">
-                  Connecting students with local home cooks for fresh, 
-                  homemade meals delivered monthly.
-                </p>
-
-                <div className="flex gap-4 mt-8">
-                  {socialIcons.map((social, index) => (
+        <footer className="relative py-16 mt-16">
+          <div className="flex items-start gap-16 mb-16">
+            <div className="flex-1">
+              <div className="flex items-center gap-4 mb-8">
+                <img
+                  className="w-[193px] h-[156px] object-cover"
+                  alt="Logo"
+                  src="/figmaAssets/1-3.png"
+                />
+              </div>
+              <p className="font-medium text-gray-600 text-lg max-w-[400px] mb-8">
+                Connect with local home cooks for fresh, authentic meals
+                delivered to your doorstep. Monthly subscriptions made simple.
+              </p>
+              <div className="flex gap-4">
+                {socialIcons.map((social, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="icon"
+                    className="w-12 h-12 rounded-full"
+                  >
                     <img
-                      key={index}
                       className="w-6 h-6"
-                      alt={social.alt}
+                      alt={social.name}
                       src={social.icon}
                     />
-                  ))}
-                </div>
+                  </Button>
+                ))}
               </div>
+            </div>
 
-              {/* Footer Links */}
-              {footerSections.map((section, index) => (
-                <div key={index} className="flex-1">
-                  <h3 className="font-semibold text-black text-xl mb-8">
-                    {section.title}
-                  </h3>
-                  <div className="space-y-4">
-                    {section.links.map((link, linkIndex) => (
-                      <div key={linkIndex}>
-                        <span className="font-medium text-gray-600 text-base leading-[30px]">
-                          {link}
-                        </span>
-                      </div>
-                    ))}
+            {footerSections.map((section, index) => (
+              <div key={index} className="flex-1">
+                <h3 className="font-bold text-[#010f1c] text-xl mb-6">
+                  {section.title}
+                </h3>
+                <ul className="space-y-3">
+                  {section.links.map((link, linkIndex) => (
+                    <li key={linkIndex}>
+                      <a
+                        href="#"
+                        className="font-medium text-gray-600 hover:text-[#28b26f] transition-colors duration-200"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            <div className="flex-1">
+              <h3 className="font-bold text-[#010f1c] text-xl mb-6">
+                Get In Touch
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#28b26f] rounded-full flex items-center justify-center">
+                    <SendIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-600">Email</p>
+                    <p className="font-medium text-[#010f1c]">
+                      hello@mealmatch.com
+                    </p>
                   </div>
                 </div>
-              ))}
-
-              {/* Contact Section */}
-              <div className="flex-1">
-                <h3 className="font-semibold text-black text-xl mb-8">
-                  Get in Touch
-                </h3>
-                <p className="font-medium text-gray-600 text-lg leading-[30px] mb-4">
-                  Question or feedback?
-                </p>
-                <p className="font-medium text-gray-600 text-lg leading-[30px] mb-8">
-                  We'd love to hear from you
-                </p>
-
-                <div className="flex items-center gap-4 px-5 py-3.5 rounded-[60px] border border-gray-300">
-                  <Input
-                    placeholder="Email Address"
-                    className="border-0 bg-transparent p-0 font-normal text-base"
-                  />
-                  <SendIcon className="w-5 h-5" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#28b26f] rounded-full flex items-center justify-center">
+                    <SendIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-600">Phone</p>
+                    <p className="font-medium text-[#010f1c]">
+                      +91 98765 43210
+                    </p>
+                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 pt-8">
+            <div className="flex items-center justify-between">
+              <p className="font-medium text-gray-600">
+                © 2024 MealMatch. All rights reserved.
+              </p>
+              <div className="flex gap-8">
+                <a
+                  href="#"
+                  className="font-medium text-gray-600 hover:text-[#28b26f] transition-colors duration-200"
+                >
+                  Privacy Policy
+                </a>
+                <a
+                  href="#"
+                  className="font-medium text-gray-600 hover:text-[#28b26f] transition-colors duration-200"
+                >
+                  Terms of Service
+                </a>
               </div>
             </div>
           </div>
