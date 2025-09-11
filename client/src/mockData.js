@@ -8,7 +8,7 @@ export const cooks = [
     specialty: "Authentic Kongu Cuisine",
     isVeg: true,
     rating: 4.8,
-    profileImage: "/figmaAssets/ellipse-6.png",
+    profileImage: "",
     address: "R.S. Puram, Coimbatore",
     monthlyMenu: [
       { day: "Monday", dish: "Arisi Upma with Coconut Chutney" },
@@ -32,7 +32,7 @@ export const cooks = [
     specialty: "Traditional South Indian",
     isVeg: true,
     rating: 4.6,
-    profileImage: "/figmaAssets/ellipse-7.png",
+    profileImage: "",
     address: "Saibaba Colony, Coimbatore",
     monthlyMenu: [
       { day: "Monday", dish: "Masala Dosa with Sambar & Chutney" },
@@ -56,7 +56,7 @@ export const cooks = [
     specialty: "Mixed Veg & Non-Veg",
     isVeg: false,
     rating: 4.7,
-    profileImage: "/figmaAssets/ellipse-9.png",
+    profileImage: "",
     address: "Gandhipuram, Coimbatore",
     monthlyMenu: [
       { day: "Monday", dish: "Chicken Curry with Rice" },
@@ -80,7 +80,7 @@ export const cooks = [
     specialty: "Healthy & Nutritious Meals",
     isVeg: true,
     rating: 4.9,
-    profileImage: "/figmaAssets/ellipse-10.png",
+    profileImage: "",
     address: "Peelamedu, Coimbatore",
     monthlyMenu: [
       { day: "Monday", dish: "Quinoa Upma with Vegetables" },

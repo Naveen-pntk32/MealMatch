@@ -77,7 +77,7 @@ export const CustomerTestimonialsSection = (): JSX.Element => {
               <div>
                 <h4 className="font-bold text-[#010f1c] text-xl leading-tight">
                   {/* TODO: Replace with actual reviewer name */}
-                  Naveen
+                  Likitha
                 </h4>
                 <p className="font-medium text-gray-600 text-base">
                   {/* TODO: Replace with actual reviewer title/role */}
