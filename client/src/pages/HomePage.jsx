@@ -23,8 +23,6 @@ import { cooks } from "../mockData.js";
 
 // Import existing sections
 import { AboutUsSection } from "./sections/AboutUsSection";
-import { CustomerTestimonialsSection } from "./sections/CustomerTestimonialsSection";
-import { DeliveryPartnerSection } from "./sections/DeliveryPartnerSection";
 import { FeaturedDishesSection } from "./sections/FeaturedDishesSection";
 import { MenuSection } from "./sections/MenuSection";
 import FeaturedDishCard from "../components/DishCard.jsx";
@@ -440,8 +438,6 @@ const HomePage = () => {
           </div>
         </section>
 
-        
-
         {/* NEARBY COOKS Section */}
         <section className="relative py-16">
           <div className="text-center mb-16">
@@ -492,17 +488,11 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Customer Testimonials Section */}
-        <CustomerTestimonialsSection />
-
         {/* Menu Section */}
         <MenuSection />
 
         {/* About Us Section */}
         <AboutUsSection />
-
-        {/* Delivery Partner Section */}
-        <DeliveryPartnerSection />
 
         {/* Footer */}
         <footer className="relative py-16 mt-16">

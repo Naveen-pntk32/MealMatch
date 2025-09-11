@@ -12,8 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { AboutUsSection } from "./sections/AboutUsSection";
-import { CustomerTestimonialsSection } from "./sections/CustomerTestimonialsSection";
-import { DeliveryPartnerSection } from "./sections/DeliveryPartnerSection";
 import { FeaturedDishesSection } from "./sections/FeaturedDishesSection";
 import { MenuSection } from "./sections/MenuSection";
 import { RestaurantListSection } from "./sections/RestaurantListSection";
@@ -203,8 +201,6 @@ export const FoodeliDesign = (): JSX.Element => {
           </div>
         </section>
 
-        {/* Customer Testimonials Section */}
-        <CustomerTestimonialsSection />
 
         {/* What We Serve Section */}
         <section className="relative px-4 py-16">
@@ -312,8 +308,6 @@ export const FoodeliDesign = (): JSX.Element => {
         {/* About Us Section */}
         <AboutUsSection />
 
-        {/* Delivery Partner Section */}
-        <DeliveryPartnerSection />
 
         {/* Restaurant Showcase Section */}
         <section className="relative px-4 py-16">
