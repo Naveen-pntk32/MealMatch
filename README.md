@@ -72,3 +72,148 @@ Preferred communication style: Simple, everyday language.
 - **Custom CSS Variables**: Theme-based color system and animations
 
 
+
+## Project Structure
+
+```text
+c:\Projects\MealMatch\
+  api\
+    index.ts
+  client\
+    index.html
+    public\
+      figmaAssets\
+        ... (static images and svg assets)
+    src\
+      App.jsx
+      App.tsx
+      components\
+        DishCard.jsx
+        ProtectedRoute.jsx
+        ui\
+          accordion.tsx
+          ... (shadcn/ui primitives)
+      context\
+        AuthContext.jsx
+      hooks\
+        use-mobile.tsx
+        use-toast.ts
+      lib\
+        queryClient.ts
+        utils.ts
+      pages\
+        CookDashboard.jsx
+        CookProfilePage.jsx
+        FoodeliDesign.tsx
+        HomePage.jsx
+        LoginPage.jsx
+        not-found.tsx
+        sections\
+          CustomerTestimonialsSection.tsx
+          FeaturedDishesSection.tsx
+          MenuSection.tsx
+          RestaurantListSection.tsx
+      index.css
+      main.jsx
+      main.tsx
+      mockData.js
+  components.json
+  drizzle.config.ts
+  package.json
+  postcss.config.js
+  server\
+    app.ts
+    index.ts
+    routes.ts
+    storage.ts
+    vite.ts
+  shared\
+    schema.ts
+  tailwind.config.ts
+  tsconfig.json
+  vercel.json
+  vite.config.ts
+```
+
+### Notable folders
+- **client**: React app (TypeScript + shadcn/ui + Tailwind).
+- **server**: Express server entry and config.
+- **api**: Thin API bootstrap (SSR/proxy or future separation).
+- **shared**: Shared types/schemas across client and server (Drizzle schema lives here).
+
+
+## Setup Guide
+
+### Prerequisites
+- Node.js 18+ and npm 9+
+- PostgreSQL (local) or a Neon Database URL
+
+### 1) Install dependencies
+```bash
+npm install
+```
+
+### 2) Environment variables
+Create a `.env` in the project root:
+```bash
+# Database
+DATABASE_URL=postgres://user:password@localhost:5432/mealmatch
+
+# Sessions (example secret)
+SESSION_SECRET=replace-with-a-long-random-string
+
+# Server
+PORT=5174
+
+# Optional: Vercel/Neon specific URLs
+# NEON_DATABASE_URL=...
+```
+
+If deploying to Neon, put the Neon connection string in `DATABASE_URL`.
+
+### 3) Database migrations
+Initialize and run Drizzle migrations:
+```bash
+npx drizzle-kit generate
+npx drizzle-kit migrate
+```
+
+### 4) Start development servers
+Run the Express server (with TS):
+```bash
+npm run dev:server
+```
+
+Run the Vite client:
+```bash
+npm run dev:client
+```
+
+Or run both concurrently if available:
+```bash
+npm run dev
+```
+
+Common scripts (see `package.json`):
+- `dev`: start client and server in dev
+- `dev:client`: Vite dev server for React
+- `dev:server`: Express server with TSX
+- `build`: build client and server
+- `build:client`: Vite build for client
+- `build:server`: ESBuild/TS build for server
+
+### 5) Production build
+```bash
+npm run build
+npm run start
+```
+
+### Path aliases
+TypeScript path aliases are configured:
+- Client: import from `@/` for `client/src`
+- Shared: import from `@shared/` for `shared`
+
+### Troubleshooting
+- Ensure `DATABASE_URL` is reachable and matches your Postgres credentials.
+- If Tailwind styles don’t apply, verify `postcss.config.js` and `tailwind.config.ts` are present and the content paths include `client/src`.
+- If UI components error, confirm shadcn/ui dependencies are installed and versions align with React 18.
