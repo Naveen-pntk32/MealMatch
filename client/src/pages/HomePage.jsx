@@ -409,12 +409,21 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex justify-center relative">
               <img
                 className="w-[500px] h-[400px] object-cover"
                 alt="Hero Image"
                 src="/figmaAssets/image 46.png"
               />
+              {/* Featured Dish Card positioned in front of the image */}
+              <div className="absolute bottom-4 right-4 z-20">
+                <FeaturedDishCard
+                  dishName="Ghee Dosa"
+                  price="₹40"
+                  rating={4}
+                  imageUrl="/figmaAssets/frame-14-1.png"
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -499,15 +508,8 @@ const HomePage = () => {
                 ))}
               </div>
 
-              {/* Featured Ghee Dosa Card - Positioned at bottom right */}
-              <div className="absolute bottom-0 right-0 z-10">
-                <FeaturedDishCard
-                  dishName="Ghee Dosa"
-                  price="₹40"
-                  rating={4}
-                  imageUrl="/figmaAssets/frame-14-1.png"
-                />
-              </div>
+              
+              
             </div>
           </div>
         </section>
