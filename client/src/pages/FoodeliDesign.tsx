@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { AboutUsSection } from "./sections/AboutUsSection";
+import { CustomerTestimonialsSection } from "./sections/CustomerTestimonialsSection";
 import { FeaturedDishesSection } from "./sections/FeaturedDishesSection";
 import { MenuSection } from "./sections/MenuSection";
 import { RestaurantListSection } from "./sections/RestaurantListSection";
@@ -217,97 +217,14 @@ export const FoodeliDesign = (): JSX.Element => {
         {/* Restaurant List Section */}
         <RestaurantListSection />
 
-        {/* Menu Section Header */}
-        <section className="relative px-4 py-8">
-          <div className="max-w-[1440px] mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <p className="[font-family:'Poppins',Helvetica] font-semibold text-[#28b26f] text-lg tracking-[2.88px] mb-4">
-                  OUR MENU
-                </p>
-                <h2 className="[font-family:'Rubik',Helvetica] font-bold text-[#010f1c] text-[45px] leading-[60px]">
-                  Menu That Always Makes You Fall In Love
-                </h2>
-              </div>
-              <div className="flex gap-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-16 h-16 rounded-full"
-                >
-                  <img
-                    className="w-8 h-8"
-                    alt="Previous"
-                    src="/figmaAssets/frame-48095867.svg"
-                  />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-16 h-16 rounded-full"
-                >
-                  <img
-                    className="w-8 h-8"
-                    alt="Next"
-                    src="/figmaAssets/frame-12.svg"
-                  />
-                </Button>
-              </div>
-            </div>
-
-            {/* Menu Categories */}
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-1.5 h-[573px] bg-gray-6 rounded-[20px]">
-                <div className="h-[76px] bg-[#28b26f] rounded-[20px]" />
-              </div>
-
-              <div className="ml-16 space-y-8">
-                {menuCategories.map((category, index) => (
-                  <div key={index} className="flex items-center gap-4">
-                    <div
-                      className={`flex items-center gap-4 px-6 py-4 rounded-[50px] ${
-                        category.active
-                          ? "bg-[#28b26f] text-white w-[254px]"
-                          : "text-black"
-                      }`}
-                    >
-                      <div
-                        className={`w-[52px] h-[52px] rounded-[30px] overflow-hidden ${
-                          category.active ? "bg-white" : ""
-                        }`}
-                      >
-                        <img
-                          className="w-12 h-12 object-cover"
-                          alt={category.name}
-                          src={category.icon}
-                        />
-                      </div>
-                      <span className="[font-family:'Poppins',Helvetica] font-medium text-2xl">
-                        {category.name}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Decorative elements */}
-              <div className="absolute top-[688px] left-[171px] w-3.5 h-3.5 bg-yellow rounded-[3px] rotate-[-25deg]" />
-              <div className="absolute top-[837px] right-8 w-3 h-3 bg-yellow rounded-[3px] rotate-[-25deg]" />
-              <div className="absolute top-[941px] left-[592px] w-3.5 h-3.5 bg-[#eb0029] rounded-[3px] rotate-[-25deg]" />
-              <div className="absolute bottom-0 left-2.5 w-3 h-3 bg-yellow rounded-[10px] rotate-[-25deg]" />
-            </div>
-          </div>
-        </section>
 
         {/* Featured Dishes Section */}
         <FeaturedDishesSection />
 
-        {/* Menu Section */}
-        <MenuSection />
 
-        {/* About Us Section */}
-        <AboutUsSection />
 
+        {/* Customer Testimonials Section */}
+        <CustomerTestimonialsSection />
 
         {/* Restaurant Showcase Section */}
         <section className="relative px-4 py-16">

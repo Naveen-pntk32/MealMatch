@@ -22,7 +22,7 @@ import { useAuth } from "../context/AuthContext";
 import { cooks } from "../mockData.js";
 
 // Import existing sections
-import { AboutUsSection } from "./sections/AboutUsSection";
+import { CustomerTestimonialsSection } from "./sections/CustomerTestimonialsSection";
 import { FeaturedDishesSection } from "./sections/FeaturedDishesSection";
 import { MenuSection } from "./sections/MenuSection";
 import FeaturedDishCard from "../components/DishCard.jsx";
@@ -491,8 +491,8 @@ const HomePage = () => {
         {/* Menu Section */}
         <MenuSection />
 
-        {/* About Us Section */}
-        <AboutUsSection />
+        {/* Customer Testimonials Section */}
+        <CustomerTestimonialsSection />
 
         {/* Footer */}
         <footer className="relative py-16 mt-16">
