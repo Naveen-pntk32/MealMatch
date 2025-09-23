@@ -48,9 +48,12 @@ function App() {
                     </ProtectedRoute>
                   } 
                 />
+                <Route path='/test' element={<StudentDashboard />} />
                 
                 {/* 404 Route */}
+
                 <Route path="*" element={<NotFound />} />
+                      
               </Routes>
             </div>
             <Toaster />

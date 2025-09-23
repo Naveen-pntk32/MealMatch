@@ -50,7 +50,7 @@ const LoginPage = () => {
     if (result.success) {
       toast({
         title: 'Login Successful',
-        description: `Welcome back, ${result.user.name}!`,
+        description: `Welcome back,`,
       });
       
       // Redirect to appropriate dashboard
