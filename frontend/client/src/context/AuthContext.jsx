@@ -13,7 +13,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const BASE_URL = "http://localhost:3000";
 
@@ -27,21 +27,23 @@ export const AuthProvider = ({ children }) => {
 
       if (res.ok) {
         const data = await res.json();
-        setUser("student");
+        // setUser("cook");
+        // console.log(data);
+        
       } else {
-        setUser(null);
+        // setUser(null);
       }
     } catch (err) {
       console.error("Failed to fetch user:", err);
       setUser(null);
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
   // ✅ On app load → check if user is logged in
   useEffect(() => {
-    fetchCurrentUser();
+    // fetchCurrentUser();
   }, []);
 
   // ✅ Register user
@@ -57,7 +59,7 @@ export const AuthProvider = ({ children }) => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Registration failed");
 
-      setUser(data); // server returns created user
+      // setUser(data); // server returns created user
       return { success: true, user: data };
     } catch (err) {
       return { success: false, error: err.message };
@@ -83,8 +85,12 @@ export const AuthProvider = ({ children }) => {
       }
 
       // After login, fetch the logged-in user details
-      await fetchCurrentUser();
+      // await fetchCurrentUser();
+      const data = await res.json()
 
+      console.log(data);
+      
+      setUser(data);
       return { success: true, user };
     } catch (err) {
       return { success: false, error: err.message };

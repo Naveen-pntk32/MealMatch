@@ -35,6 +35,7 @@ const StudentDashboard = () => {
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const [currentTime, setCurrentTime] = useState(new Date());
+console.log(user);
 
   // TODO: API Integration - Fetch student's subscription data from backend
   const subscription = getSubscriptionByStudentId(user?.id);
@@ -106,7 +107,7 @@ const StudentDashboard = () => {
   const deliveryStatus = getDeliveryStatus();
   const todaysMeal = getTodaysMeal();
 
-  if (!user || user.role !== 'student') {
+  if (!user || user.role !== 'STUDENT') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

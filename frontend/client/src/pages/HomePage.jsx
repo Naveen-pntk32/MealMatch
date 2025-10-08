@@ -26,6 +26,7 @@ import { CustomerTestimonialsSection } from "./sections/CustomerTestimonialsSect
 import { FeaturedDishesSection } from "./sections/FeaturedDishesSection";
 import { MenuSection } from "./sections/MenuSection";
 import FeaturedDishCard from "../components/DishCard.jsx";
+import CookCard from "./compounttents/Cookcard.jsx";
 
 const navigationItems = [
   { label: "Services", hasDropdown: true },
@@ -190,128 +191,62 @@ const socialIcons = [
 ];
 
 // Cook Card Component
-const CookCard = ({ cook }) => {
-  const navigate = useNavigate();
 
-  const handleViewProfile = () => {
-    // Navigate to cook profile page
-    navigate(`/cook/${cook.id}`);
-  };
-
-  return (
-    <Card className="w-[280px] h-[400px] rounded-[30px] overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardContent className="p-0 h-full relative">
-        {/* Profile Image */}
-        <div className="w-full h-[200px] overflow-hidden">
-          <img
-            className="w-full h-full object-cover"
-            alt={cook.name}
-            src={cook.profileImage}
-          />
-        </div>
-
-        {/* Cook Info */}
-        <div className="p-6 flex flex-col justify-between h-[200px]">
-          <div>
-            <h3 className="font-bold text-[#010f1c] text-xl mb-2">
-              {cook.name}
-            </h3>
-            <p className="font-medium text-[#28b26f] text-sm mb-2">
-              {cook.specialty}
-            </p>
-            <p className="font-medium text-gray-600 text-sm mb-3">
-              {cook.address}
-            </p>
-
-            {/* Rating */}
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <StarIcon
-                    key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.floor(cook.rating)
-                        ? "text-yellow-400 fill-current"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="font-medium text-gray-600 text-sm">
-                {cook.rating}
-              </span>
-            </div>
-
-            {/* Price */}
-            <p className="font-bold text-[#28b26f] text-lg">
-              ₹{cook.monthlyPrice}/month
-            </p>
-          </div>
-
-          {/* View Button */}
-          <Button
-            onClick={handleViewProfile}
-            className="w-full bg-[#28b26f] hover:bg-[#28b26f]/90 text-white font-medium py-2 rounded-[25px]"
-          >
-            View Menu
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
 
 // Dish Card Component
-const DishCard = ({ dish }) => {
-  const handleOrderNow = () => {
-    alert(`Added ${dish.name} to cart!`);
-  };
 
-  return (
-    <Card className="w-[200px] h-[250px] rounded-[20px] overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <CardContent className="p-0 h-full relative">
-        {/* Dish Image */}
-        <div className="w-full h-[120px] overflow-hidden">
-          <img
-            className="w-full h-full object-cover"
-            alt={dish.name}
-            src={dish.image}
-          />
-        </div>
 
-        {/* Dish Info */}
-        <div className="p-4 flex flex-col justify-between h-[130px]">
-          <div>
-            <h4 className="font-bold text-[#010f1c] text-sm mb-1">
-              {dish.name}
-            </h4>
-            <p className="font-bold text-[#28b26f] text-lg">{dish.price}</p>
-          </div>
 
-          {/* Order Button */}
-          <Button
-            onClick={handleOrderNow}
-            className="w-full bg-[#28b26f] hover:bg-[#28b26f]/90 text-white font-medium py-1 text-xs rounded-[15px]"
-          >
-            Order Now
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
 
+
+// homepage Component
 const HomePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState(1); // Default to Biryani
   const [cookScrollPosition, setCookScrollPosition] = useState(0);
-
+const cooks = [{
+  id: 1,
+  name: "Chef Raj",
+  profileImage: "https://media.licdn.com/dms/image/v2/D5603AQGBB8_7mTfD0g/profile-displayphoto-shrink_200_200/B56ZYJqSNoH0AY-/0/1743918804918?e=2147483647&v=beta&t=EIBJF1InxDKLPagLGiHU2r4gjSyllv5uAPZAXaFvsWw",
+  specialty: "Indian Cuisine",
+  address: "123 MG Road, Bangalore",
+  rating: 4.5,
+  monthlyPrice: 15000
+},
+{
+  id: 1,
+  name: "Chef Raj",
+  profileImage: "https://media.licdn.com/dms/image/v2/D5603AQGBB8_7mTfD0g/profile-displayphoto-shrink_200_200/B56ZYJqSNoH0AY-/0/1743918804918?e=2147483647&v=beta&t=EIBJF1InxDKLPagLGiHU2r4gjSyllv5uAPZAXaFvsWw",
+  specialty: "Indian Cuisine",
+  address: "123 MG Road, Bangalore",
+  rating: 4.5,
+  monthlyPrice: 15000
+},
+{
+  id: 1,
+  name: "Chef Raj",
+  profileImage: "https://media.licdn.com/dms/image/v2/D5603AQGBB8_7mTfD0g/profile-displayphoto-shrink_200_200/B56ZYJqSNoH0AY-/0/1743918804918?e=2147483647&v=beta&t=EIBJF1InxDKLPagLGiHU2r4gjSyllv5uAPZAXaFvsWw",
+  specialty: "Indian Cuisine",
+  address: "123 MG Road, Bangalore",
+  rating: 4.5,
+  monthlyPrice: 15000
+}
+,{
+  id: 1,
+  name: "Chef Raj",
+  profileImage: "https://media.licdn.com/dms/image/v2/D5603AQGBB8_7mTfD0g/profile-displayphoto-shrink_200_200/B56ZYJqSNoH0AY-/0/1743918804918?e=2147483647&v=beta&t=EIBJF1InxDKLPagLGiHU2r4gjSyllv5uAPZAXaFvsWw",
+  specialty: "Indian Cuisine",
+  address: "123 MG Road, Bangalore",
+  rating: 4.5,
+  monthlyPrice: 15000
+}
+]
   const handleLoginClick = () => {
     if (user) {
       // Redirect to appropriate dashboard
       const dashboardPath =
-        user.role === "student" ? "/student/dashboard" : "/cook/dashboard";
+        user.role === "STUDENT" ? "/student/dashboard" : "/cook/dashboard";
       navigate(dashboardPath);
     } else {
       navigate("/login");
@@ -461,8 +396,8 @@ const HomePage = () => {
               style={{ scrollLeft: cookScrollPosition }}
             >
               {/* Duplicate cooks for infinite scroll effect */}
-              {[...cooks, ...cooks].map((cook, index) => (
-                <div key={`${cook.id}-${index}`} className="flex-shrink-0">
+              {cooks.map((cook, index) => (
+                <div key={`${cook.id}-${index}`} className="flex-shrink-0 ]">
                   <CookCard cook={cook} />
                 </div>
               ))}
