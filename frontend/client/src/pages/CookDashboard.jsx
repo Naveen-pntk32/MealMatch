@@ -40,7 +40,8 @@ const CookDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
   // TODO: API Integration - Fetch cook's data from backend
-  const cookProfile = user?.cookId ? getCookById(user.cookId) : null;
+  console.log(user?.uid);
+  const cookProfile = user?.uid ? getCookById(1) : null;
   const subscribers = cookProfile ? getStudentsByCoooklId(cookProfile.id) : [];
   const notifications = cookProfile ? getNotificationsByCookId(cookProfile.id) : [];
 
@@ -76,7 +77,7 @@ const CookDashboard = () => {
   const todaysMeal = getTodaysMeal();
   const stats = getMonthlyStats();
 
-  if (!user || user.role !== 'cook') {
+  if (!user || user.role !== 'COOK') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

@@ -27,6 +27,7 @@ const CookProfilePage = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isSubscribing, setIsSubscribing] = useState(false);
+console.log(user);
 
   // TODO: API Integration - Fetch cook data from backend
   const cook = getCookById(id);
@@ -56,7 +57,7 @@ const CookProfilePage = () => {
       return;
     }
 
-    if (user.role !== 'student') {
+    if (user.role !== 'COOK') {
       toast({
         title: 'Access Denied',
         description: 'Only students can subscribe to cooks',
@@ -107,7 +108,7 @@ const CookProfilePage = () => {
               <Button
                 variant="outline"
                 onClick={() => {
-                  const dashboardPath = user.role === 'student' ? '/student/dashboard' : '/cook/dashboard';
+                  const dashboardPath = user.role === 'STUDENT' ? '/student/dashboard' : '/cook/dashboard';
                   navigate(dashboardPath);
                 }}
               >

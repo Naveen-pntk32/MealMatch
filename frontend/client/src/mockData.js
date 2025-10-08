@@ -147,7 +147,7 @@ export const mockNotifications = [
 
 // Helper functions for mock data operations
 export const getCookById = (id) => {
-  return cooks.find(cook => cook.id === parseInt(id));
+  return cooks?.find(cook => cook.id === parseInt(id));
 };
 
 export const getSubscriptionByStudentId = (studentId) => {
