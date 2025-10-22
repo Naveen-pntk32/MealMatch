@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:5000",  // allow your frontend
+  origin: "*",  // allow your frontend
   credentials: true                // if sending cookies or auth headers
 }));
 connectDB();

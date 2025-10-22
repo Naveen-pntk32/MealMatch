@@ -1,5 +1,5 @@
-// Cook Profile Page - Display cook details and monthly menu
-import React, { useState } from 'react';
+// Cook Profile Page - Display cook details and monthly menu with Razorpay
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -20,6 +20,7 @@ import {
 
 // TODO: API Integration - Replace with real API calls
 import { getCookById } from '../mockData';
+import axios from 'axios';
 
 const CookProfilePage = () => {
   const { id } = useParams();
@@ -27,7 +28,20 @@ const CookProfilePage = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isSubscribing, setIsSubscribing] = useState(false);
-console.log(user);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => setScriptLoaded(true);
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // TODO: API Integration - Fetch cook data from backend
   const cook = getCookById(id);
@@ -46,7 +60,7 @@ console.log(user);
     );
   }
 
-  const handleSubscribe = async () => {
+  const handleSubscribe = async (amt) => {
     if (!user) {
       toast({
         title: 'Login Required',
@@ -57,7 +71,7 @@ console.log(user);
       return;
     }
 
-    if (user.role !== 'COOK') {
+    if (user.role !== 'STUDENT') {
       toast({
         title: 'Access Denied',
         description: 'Only students can subscribe to cooks',
@@ -66,17 +80,75 @@ console.log(user);
       return;
     }
 
-    setIsSubscribing(true);
-    
-    // TODO: API Integration - Call subscription API endpoint
-    setTimeout(() => {
+    if (!scriptLoaded || !window.Razorpay) {
       toast({
-        title: 'Subscription Successful!',
-        description: `You have successfully subscribed to ${cook.name}`,
+        title: 'Razorpay Not Loaded',
+        description: 'Please wait for Razorpay script to load',
+        variant: 'destructive'
       });
+      return;
+    }
+
+    setIsSubscribing(true);
+
+    try {
+      // 1️⃣ Create order on backend
+      const orderRes = await axios.post('https://razorpay-project.onrender.com/create-order', {
+        amount: amt * 100 // Convert ₹ to paise
+      });
+
+      const keyRes = await axios.get('https://razorpay-project.onrender.com/get-key');
+      const { key } = keyRes.data;
+      const { order } = orderRes.data;
+
+      // 2️⃣ Razorpay options
+      const options = {
+        key,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'MealMatch',
+        description: `Subscribe to ${cook.name}`,
+        order_id: order.id,
+        handler: async function (response) {
+          toast({
+            title: 'Payment Successful!',
+            description: `You have successfully subscribed to ${cook.name}`,
+          });
+
+          // Optional: call backend to save subscription
+          await axios.post('https://razorpay-project.onrender.com/pay-orders', {
+            cookId: 1,
+            userId: 11,
+            amount: order.amount,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
+          });
+
+          navigate('/student/dashboard');
+        },
+        prefill: {
+          name: "arul",
+          email: "arul@gmail.com",
+          contact:'9999999999',
+        },
+        theme: {
+          color: '#28b26f',
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error('Payment Error:', error);
+      toast({
+        title: 'Payment Failed',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive'
+      });
+    } finally {
       setIsSubscribing(false);
-      navigate('/student/dashboard');
-    }, 2000);
+    }
   };
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -185,14 +257,14 @@ console.log(user);
                     <p className="text-gray-600 mb-4">per month</p>
                     
                     <Button
-                      onClick={handleSubscribe}
+                      onClick={()=> handleSubscribe(cook.monthlyPrice)}
                       disabled={isSubscribing}
                       className="w-full bg-[#28b26f] hover:bg-[#28b26f]/90 h-12 text-white font-semibold"
                     >
                       {isSubscribing ? (
                         <div className="flex items-center gap-2">
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          Subscribing...
+                          Processing...
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
