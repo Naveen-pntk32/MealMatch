@@ -1,35 +1,44 @@
 const express = require("express");
 const route = express.Router();
 const addfood = require('../../models/addweekly');
+// const subscriptionSchema = require("../../models/subscriptions");
+const user = require("../../models/UserModel");
 
-router.post('/', async (req, res) => {
+
+
+route.get('/getall', async (req, res) => {
+  try {
+    const menus = await addfood.find();
+    res.status(200).json({data : menus});
+  } catch (error) {
+    console.error('Error fetching weekly menus:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+})
+route.post('/', async (req, res) => {
   try {
     const { cookId, menuItems } = req.body;
 
     // Check if cook exists
-    const cook = await Cook.findById(cookId);
-    if (!cook) {
-      return res.status(404).json({ message: 'Cook not found' });
-    }
+    const cook = await user.findById(cookId);
+    if (!cook) return res.status(404).json({ message: 'Cook not found' });
 
-    // Validate menu items array
-    if (!Array.isArray(menuItems) || menuItems.length === 0) {
-      return res.status(400).json({ message: 'Menu items must be a non-empty array' });
-    }
+    // Convert menuItems array into day-based object
+    const menu = {};
+    menuItems.forEach(item => {
+      menu[item.day] = item.dishName;
+    });
 
-    // Format menu items
-    const menuData = menuItems.map(item => ({
-      cookId,
-      day: item.day,
-      dishName: item.dishName,
-    }));
-
-    // Save all menu items at once
-    const createdMenus = await addfood.insertMany(menuData);
+    // Upsert: create or update menu for the cook
+    const weeklyMenu = await addfood.findOneAndUpdate(
+      { cookId },
+      { cookId, ...menu },
+      { upsert: true, new: true }
+    );
 
     res.status(201).json({
-      message: 'Weekly menu added successfully',
-      menus: createdMenus,
+      message: 'Weekly menu added/updated successfully',
+      menu: weeklyMenu,
     });
   } catch (error) {
     console.error('Error adding weekly menu:', error);
@@ -37,4 +46,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = route;
