@@ -61,24 +61,24 @@ const CookProfilePage = () => {
   }
 
   const handleSubscribe = async (amt) => {
-    if (!user) {
-      toast({
-        title: 'Login Required',
-        description: 'Please login to subscribe to a cook',
-        variant: 'destructive'
-      });
-      navigate('/login');
-      return;
-    }
+    // if (!user) {
+    //   toast({
+    //     title: 'Login Required',
+    //     description: 'Please login to subscribe to a cook',
+    //     variant: 'destructive'
+    //   });
+    //   navigate('/login');
+    //   return;
+    // }
 
-    if (user.role !== 'STUDENT') {
-      toast({
-        title: 'Access Denied',
-        description: 'Only students can subscribe to cooks',
-        variant: 'destructive'
-      });
-      return;
-    }
+    // if (user.role !== 'STUDENT') {
+    //   toast({
+    //     title: 'Access Denied',
+    //     description: 'Only students can subscribe to cooks',
+    //     variant: 'destructive'
+    //   });
+    //   return;
+    // }
 
     if (!scriptLoaded || !window.Razorpay) {
       toast({
