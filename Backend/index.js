@@ -7,8 +7,8 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: "*",  // allow your frontend
-  credentials: true                // if sending cookies or auth headers
+  origin: "https://opulent-space-guacamole-5gg5749665jq37jxp-5000.app.github.dev", // ✅ no trailing slash
+  credentials: true
 }));
 connectDB();
 const regRoute = require('./routes/auth/register');

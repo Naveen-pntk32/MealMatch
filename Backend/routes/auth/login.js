@@ -12,13 +12,11 @@ route.post("/", async (req, res) => {
             return res.status(400).json({ message: "Email and password are required" });
         }
 
-      
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-      
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: "Incorrect password" });
@@ -30,14 +28,23 @@ route.post("/", async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN || "1d" }
         );
 
+        // Set JWT token cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false, 
+            secure: false, // set to true in production with HTTPS
             sameSite: 'Lax',
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        res.status(200).json({ uid : user._id, role : user.role });
+        // Set role cookie
+        res.cookie('role', user.role, {
+            httpOnly: false, // accessible via JS on client-side if needed
+            secure: false,
+            sameSite: 'Lax',
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        res.status(200).json({ uid: user._id, role: user.role });
 
     } catch (error) {
         console.error("Login error:", error);
