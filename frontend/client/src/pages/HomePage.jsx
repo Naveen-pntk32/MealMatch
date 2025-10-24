@@ -34,134 +34,134 @@ const navigationItems = [
   { label: "Contact", hasDropdown: false },
 ];
 
-const menuCategories = [
-  {
-    name: "Tiffin Items",
-    icon: "/figmaAssets/2450-1.png",
-    dishes: [
-      {
-        id: 1,
-        name: "Masala Dosa",
-        price: "₹80",
-        image: "/figmaAssets/frame-14-1.png",
-      },
-      {
-        id: 2,
-        name: "Idli Sambar",
-        price: "₹60",
-        image: "/figmaAssets/frame-14-2.png",
-      },
-      {
-        id: 3,
-        name: "Pongal",
-        price: "₹70",
-        image: "/figmaAssets/frame-15.png",
-      },
-    ],
-  },
-  {
-    name: "Biryani",
-    icon: "/figmaAssets/image-2.png",
-    dishes: [
-      {
-        id: 4,
-        name: "Hyderabadi Biryani",
-        price: "₹150",
-        image: "/figmaAssets/frame-14-2.png",
-      },
-      {
-        id: 5,
-        name: "Seeraga Samba",
-        price: "₹200",
-        image: "/figmaAssets/frame-15.png",
-      },
-      {
-        id: 6,
-        name: "Chicken Biryani",
-        price: "₹180",
-        image: "/figmaAssets/frame-14-1.png",
-      },
-    ],
-  },
-  {
-    name: "Non Veg Gravy",
-    icon: "/figmaAssets/6-07-1.png",
-    dishes: [
-      {
-        id: 7,
-        name: "Chicken Curry",
-        price: "₹120",
-        image: "/figmaAssets/frame-14-1.png",
-      },
-      {
-        id: 8,
-        name: "Mutton Gravy",
-        price: "₹180",
-        image: "/figmaAssets/frame-14-2.png",
-      },
-      {
-        id: 9,
-        name: "Fish Curry",
-        price: "₹140",
-        image: "/figmaAssets/frame-15.png",
-      },
-    ],
-  },
-  {
-    name: "Meals",
-    icon: "/figmaAssets/3-01.png",
-    dishes: [
-      {
-        id: 10,
-        name: "South Indian Thali",
-        price: "₹100",
-        image: "/figmaAssets/frame-14-1.png",
-      },
-      {
-        id: 11,
-        name: "North Indian Thali",
-        price: "₹120",
-        image: "/figmaAssets/frame-14-2.png",
-      },
-      {
-        id: 12,
-        name: "Special Thali",
-        price: "₹150",
-        image: "/figmaAssets/frame-15.png",
-      },
-    ],
-  },
-  {
-    name: "Variety Rice",
-    icon: "/figmaAssets/28-15.png",
-    dishes: [
-      {
-        id: 13,
-        name: "Coconut Rice",
-        price: "₹80",
-        image: "/figmaAssets/frame-14-1.png",
-      },
-      {
-        id: 14,
-        name: "Lemon Rice",
-        price: "₹70",
-        image: "/figmaAssets/frame-14-2.png",
-      },
-      {
-        id: 15,
-        name: "Tomato Rice",
-        price: "₹75",
-        image: "/figmaAssets/frame-15.png",
-      },
-    ],
-  },
-];
+// const menuCategories = [
+//   {
+//     name: "Tiffin Items",
+//     icon: "/figmaAssets/2450-1.png",
+//     dishes: [
+//       {
+//         id: 1,
+//         name: "Masala Dosa",
+//         price: "₹80",
+//         image: "/figmaAssets/frame-14-1.png",
+//       },
+//       {
+//         id: 2,
+//         name: "Idli Sambar",
+//         price: "₹60",
+//         image: "/figmaAssets/frame-14-2.png",
+//       },
+//       {
+//         id: 3,
+//         name: "Pongal",
+//         price: "₹70",
+//         image: "/figmaAssets/frame-15.png",
+//       },
+//     ],
+//   },
+//   {
+//     name: "Biryani",
+//     icon: "/figmaAssets/image-2.png",
+//     dishes: [
+//       {
+//         id: 4,
+//         name: "Hyderabadi Biryani",
+//         price: "₹150",
+//         image: "/figmaAssets/frame-14-2.png",
+//       },
+//       {
+//         id: 5,
+//         name: "Seeraga Samba",
+//         price: "₹200",
+//         image: "/figmaAssets/frame-15.png",
+//       },
+//       {
+//         id: 6,
+//         name: "Chicken Biryani",
+//         price: "₹180",
+//         image: "/figmaAssets/frame-14-1.png",
+//       },
+//     ],
+//   },
+//   {
+//     name: "Non Veg Gravy",
+//     icon: "/figmaAssets/6-07-1.png",
+//     dishes: [
+//       {
+//         id: 7,
+//         name: "Chicken Curry",
+//         price: "₹120",
+//         image: "/figmaAssets/frame-14-1.png",
+//       },
+//       {
+//         id: 8,
+//         name: "Mutton Gravy",
+//         price: "₹180",
+//         image: "/figmaAssets/frame-14-2.png",
+//       },
+//       {
+//         id: 9,
+//         name: "Fish Curry",
+//         price: "₹140",
+//         image: "/figmaAssets/frame-15.png",
+//       },
+//     ],
+//   },
+//   {
+//     name: "Meals",
+//     icon: "/figmaAssets/3-01.png",
+//     dishes: [
+//       {
+//         id: 10,
+//         name: "South Indian Thali",
+//         price: "₹100",
+//         image: "/figmaAssets/frame-14-1.png",
+//       },
+//       {
+//         id: 11,
+//         name: "North Indian Thali",
+//         price: "₹120",
+//         image: "/figmaAssets/frame-14-2.png",
+//       },
+//       {
+//         id: 12,
+//         name: "Special Thali",
+//         price: "₹150",
+//         image: "/figmaAssets/frame-15.png",
+//       },
+//     ],
+//   },
+//   {
+//     name: "Variety Rice",
+//     icon: "/figmaAssets/28-15.png",
+//     dishes: [
+//       {
+//         id: 13,
+//         name: "Coconut Rice",
+//         price: "₹80",
+//         image: "/figmaAssets/frame-14-1.png",
+//       },
+//       {
+//         id: 14,
+//         name: "Lemon Rice",
+//         price: "₹70",
+//         image: "/figmaAssets/frame-14-2.png",
+//       },
+//       {
+//         id: 15,
+//         name: "Tomato Rice",
+//         price: "₹75",
+//         image: "/figmaAssets/frame-15.png",
+//       },
+//     ],
+//   },
+// ];
 
-const customerImages = [
-  "/figmaAssets/ellipse-5.svg",
-  "/figmaAssets/ellipse-6.png",
-  "/figmaAssets/ellipse-7.png",
-];
+// const customerImages = [
+//   "/figmaAssets/ellipse-5.svg",
+//   "/figmaAssets/ellipse-6.png",
+//   "/figmaAssets/ellipse-7.png",
+// ];
 
 const footerSections = [
   {
@@ -266,7 +266,6 @@ const cooks = [{
     setCookScrollPosition(newPosition);
   };
 
-  const selectedCategoryData = menuCategories[selectedCategory];
 
   return (
     <div className="bg-white w-full min-h-screen">
