@@ -15,24 +15,46 @@ route.get('/getall', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 })
+
+
+// Get menu by cookId
+route.get('/:id', async (req, res) => {
+  const cookId = req.params.id;
+
+  try {
+    const menu = await addfood.findOne({ cookId }); // Find menu for specific cook
+
+    if (!menu) {
+      return res.status(404).json({ message: 'Menu not found for this cook' });
+    }
+
+    res.status(200).json({ menu });
+  } catch (error) {
+    console.error('Error fetching menu for cook:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 route.post('/', async (req, res) => {
   try {
-    const { cookId, menuItems } = req.body;
+    const { cookId, menuItems, monthlyPrice } = req.body;
 
-    // Check if cook exists
+    // Validate cook existence
     const cook = await user.findById(cookId);
-    if (!cook) return res.status(404).json({ message: 'Cook not found' });
+    if (!cook) {
+      return res.status(404).json({ message: 'Cook not found' });
+    }
 
-    // Convert menuItems array into day-based object
+    // Convert menuItems array into an object by day
     const menu = {};
     menuItems.forEach(item => {
       menu[item.day] = item.dishName;
     });
 
-    // Upsert: create or update menu for the cook
+    // Create or update weekly menu (upsert)
     const weeklyMenu = await addfood.findOneAndUpdate(
       { cookId },
-      { cookId, ...menu },
+      { cookId, ...menu, monthlyPrice },
       { upsert: true, new: true }
     );
 
@@ -45,5 +67,4 @@ route.post('/', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
-
 module.exports = route;

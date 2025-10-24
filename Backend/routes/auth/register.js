@@ -4,15 +4,30 @@ const route = express.Router();
 const User = require('../../models/UserModel');
 const verifyToken = require("../middleware/middleware");
 
-// ⚠️ Remove in production
-route.get("/user", async (req, res) => {
+
+route.get("/users", async (req, res) => {
   try {
-    const data = await User.find();
-    res.json(data);
+    const users = await User.find();
+    res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// Route 2: Get single user by ID
+route.get("/user/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// module.exports = route;
+
 
 route.post('/', async (req, res) => {
   try {
