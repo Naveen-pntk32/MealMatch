@@ -4,11 +4,13 @@ import { StarIcon } from "lucide-react";
 import { Button } from "../../components/ui/button";
 
 const CookCard = ({ cook }) => {
+  console.log(cook);
+  
   const navigate = useNavigate();
 
   const handleViewProfile = () => {
     // Navigate to cook profile page
-    navigate(`/cook/${cook.id}`);
+    navigate(`/cook/${cook._id}`);
   };
 
   return (
