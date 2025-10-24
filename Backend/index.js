@@ -15,9 +15,15 @@ const regRoute = require('./routes/auth/register');
 const loginRoute = require('./routes/auth/login');
 const getCook = require('./routes/getNearbyCook/route');
 const verifyToken = require("./routes/middleware/middleware");
+const addfood = require("./routes/addfood/route");
+const subscriptionRoute = require('./routes/sbuscribe/route');
 app.use("/api/register",regRoute);
 app.use("/api/login" , loginRoute);
 app.use("/api/nearByCook",getCook);
+app.use("/api/addfood",addfood);
+app.use("/api/subscribe",subscriptionRoute);
+
+
 
 
 app.listen(process.env.PORT,()=>{

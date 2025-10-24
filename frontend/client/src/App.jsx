@@ -44,7 +44,7 @@ function App() {
                   // path="/cook/dashboard" 
                   element={
                     <ProtectedRoute role="cook">
-                      <CookDashboard />
+                      <CookDashboard  />
                     </ProtectedRoute>
                   } 
                 />

@@ -3,22 +3,24 @@ const mongoose = require('mongoose');
 const weeklyMenuSchema = new mongoose.Schema({
   cookId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Cook', // Reference to Cook model
+    ref: 'User', // changed to 'User' since your cook is stored in the User model
     required: true,
+    unique: true
   },
-  day: {
-    type: String,
+  Monday: { type: String },
+  Tuesday: { type: String },
+  Wednesday: { type: String },
+  Thursday: { type: String },
+  Friday: { type: String },
+  Saturday: { type: String },
+  Sunday: { type: String },
+
+  // new field for monthly subscription price
+  monthlyPrice: {
+    type: Number,
     required: true,
-    enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-  },
-  dishName: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+    default: 0
+  }
+}, { timestamps: true });
 
 module.exports = mongoose.model('WeeklyMenu', weeklyMenuSchema);

@@ -16,11 +16,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  mobile :{
-    type : Number,
-    required : true
-  }
-,
+
+  mobile: {
+    type: Number,
+    required: true,
+  },
+
   role: {
     type: String,
     enum: ['STUDENT', 'COOK'],
@@ -32,29 +33,31 @@ const userSchema = new mongoose.Schema({
     enum: ['VEG', 'NONVEG'],
   },
 
- location: {
-  name: {
-    type: String,
-    required: true,
-  },
-  coordinates: {
-    lat: {
-      type: Number,
+  location: {
+    name: {
+      type: String,
       required: true,
     },
-    lon: {
-      type: Number,
-      required: true,
-    }
-  }
-},
-
+    address: {
+      type: String,
+      required: true, // optional if not always available
+    },
+    coordinates: {
+      lat: {
+        type: Number,
+        required: true,
+      },
+      lon: {
+        type: Number,
+        required: true,
+      },
+    },
+  },
 
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
-// Export the model
 module.exports = mongoose.model('User', userSchema);
