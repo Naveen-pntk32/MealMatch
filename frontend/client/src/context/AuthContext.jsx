@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const BASE_URL = "http://localhost:3000";
+  const BASE_URL = "https://mealmatch-fj6j.onrender.com";
 
   // ✅ Get current user from API (session cookie)
   const fetchCurrentUser = async () => {

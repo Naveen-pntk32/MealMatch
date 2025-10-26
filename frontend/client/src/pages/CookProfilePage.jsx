@@ -47,10 +47,10 @@ const CookProfilePage = () => {
       try {
         setIsLoading(true);
 
-        const cookRes = await axios.get(`http://localhost:3000/api/register/user/${id}`);
+        const cookRes = await axios.get(`https://mealmatch-fj6j.onrender.com/api/register/user/${id}`);
         setCook(cookRes.data);
 
-        const menuRes = await axios.get(`http://localhost:3000/api/addfood/${id}`);
+        const menuRes = await axios.get(`https://mealmatch-fj6j.onrender.com/api/addfood/${id}`);
         const menuData = menuRes.data.menu;
 
         // Extract price
@@ -124,23 +124,116 @@ const CookProfilePage = () => {
         name: 'MealMatch',
         description: `Subscribe to ${cook.name}`,
         order_id: order.id,
+        // handler: async function (response) {
+        //   toast({
+        //     title: 'Payment Successful!',
+        //     description: `You have successfully subscribed to ${cook.name}`,
+        //   });
+
+        //   await axios.post('https://razorpay-project.onrender.com/pay-orders', {
+        //     cookId: cook.id,
+        //     userId: user.id,
+        //     amount: order.amount,
+        //     razorpayPaymentId: response.razorpay_payment_id,
+        //     razorpayOrderId: response.razorpay_order_id,
+        //     razorpaySignature: response.razorpay_signature,
+        //   });
+        //   // console.log("trancation id" + "  "+ );
+
+          
+        //   axios.post("https://mealmatch-fj6j.onrender.com/api/subscribe",{
+            
+        //   })
+        //   navigate('/student/dashboard');
+        // },
+
+
         handler: async function (response) {
-          toast({
-            title: 'Payment Successful!',
-            description: `You have successfully subscribed to ${cook.name}`,
-          });
+  try {
+    console.log("✅ Payment Successful!");
+    console.log("Payment ID:", response.razorpay_payment_id);
+    console.log("Order ID:", response.razorpay_order_id);
+    console.log("Signature:", response.razorpay_signature);
 
-          await axios.post('https://razorpay-project.onrender.com/pay-orders', {
-            cookId: cook.id,
-            userId: user.id,
-            amount: order.amount,
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpayOrderId: response.razorpay_order_id,
-            razorpaySignature: response.razorpay_signature,
-          });
+    toast({
+      title: "Payment Successful!",
+      description: `You have successfully subscribed to ${cook.name}`,
+    });
 
-          navigate('/student/dashboard');
-        },
+    // Step 1️⃣: Log the transaction to Razorpay backend
+    await axios.post("https://razorpay-project.onrender.com/pay-orders", {
+      cookId: cook.id,
+      userId: user.id,
+      amount: order.amount / 100, // convert from paise to ₹
+      razorpayPaymentId: response.razorpay_payment_id,
+      razorpayOrderId: response.razorpay_order_id,
+      razorpaySignature: response.razorpay_signature,
+    });
+
+    // Step 2️⃣: Add subscription entry in main backend
+    const today = new Date();
+    const nextMonth = new Date();
+    nextMonth.setMonth(today.getMonth() + 1);
+
+  //  try {
+const res = await fetch("https://mealmatch-fj6j.onrender.com/api/subscribe", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    cookId: "68fb403bd6b0ee1e50f4e7ca",
+    studentId: "68fb4587120f3f3ac962802d",
+    planType: "MONTHLY", // ✅ Fixed: must be uppercase
+    startDate: today.toISOString(),
+    endDate: nextMonth.toISOString(),
+    transactions: [
+      {
+        transactionId: response.razorpay_payment_id,
+        date: new Date().toISOString(),
+      },
+    ],
+  }),
+});
+
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Subscription creation failed");
+  }
+
+  const data = await res.json();
+  console.log("✅ Subscription created:", data);
+
+  // Optional: show toast or redirect
+  toast({
+    title: "Subscription Created",
+    description: `You have successfully subscribed to ${cook.name}`,
+  });
+  // navigate("/student/dashboard");
+
+// } catch (error) {
+//   console.error("❌ Error creating subscription:", error);
+//   toast({
+//     title: "Error",
+//     description: "Failed to create subscription. Please try again.",
+//     variant: "destructive",
+//   });
+// }
+
+
+    console.log("✅ Subscription created and transaction logged.");
+    navigate("/student/dashboard");
+  } catch (error) {
+    console.error("Error while logging transaction or creating subscription:", error);
+    toast({
+      title: "Error",
+      description: "Payment succeeded but failed to log details. Please contact support.",
+      variant: "destructive",
+    });
+  }
+},
+
         prefill: {
           name: user.name,
           email: user.email,
