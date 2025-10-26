@@ -7,6 +7,7 @@ route.post("/", async (req, res ) => {
     try {
         const { lat, lon ,radius } = req.body;
         console.log(req.body);
+         const token = req.cookies.token; 
         
 
         if (lat == null || lon == null) {
