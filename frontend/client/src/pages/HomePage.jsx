@@ -43,7 +43,7 @@ const fetchNearbyCooks = async (lat, lon) => {
   // console.log("called");
   
   try {
-    const res = await fetch("http://localhost:3000/api/nearByCook", {
+    const res = await fetch("https://mealmatch-fj6j.onrender.com/api/nearByCook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lat, lon, radius : 10000000 }),
