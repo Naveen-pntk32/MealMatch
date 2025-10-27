@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: "https://opulent-space-guacamole-5gg5749665jq37jxp-5000.app.github.dev", // ✅ no trailing slash
+  origin: "http://localhost:5000", // ✅ no trailing slash
   credentials: true
 }));
 connectDB();
@@ -17,13 +17,13 @@ const getCook = require('./routes/getNearbyCook/route');
 const verifyToken = require("./routes/middleware/middleware");
 const addfood = require("./routes/addfood/route");
 const subscriptionRoute = require('./routes/sbuscribe/route');
+const getcook = require("./routes/getCooks/getCooks")
 app.use("/api/register",regRoute);
 app.use("/api/login" , loginRoute);
 app.use("/api/nearByCook",getCook);
 app.use("/api/addfood",addfood);
 app.use("/api/subscribe",subscriptionRoute);
-
-
+app.use("/api/getcook",getcook)
 
 
 app.listen(process.env.PORT,()=>{
