@@ -43,9 +43,10 @@ const fetchNearbyCooks = async (lat, lon) => {
   // console.log("called");
   
   try {
-    const res = await fetch("https://mealmatch-fj6j.onrender.com/api/nearByCook", {
+    const res = await fetch("http://localhost:3000/api/nearByCook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+       credentials: "include",
       body: JSON.stringify({ lat, lon, radius : 10000000 }),
     });
     if (!res.ok) throw new Error("Failed to fetch nearby cooks");

@@ -11,7 +11,7 @@ npm run dev
 ##  Base URL
 
 ```
-https://mealmatch-fj6j.onrender.com
+http://localhost:3000
 ```
 
 ---
@@ -44,7 +44,7 @@ POST /api/register
 
 ```js
 async function registerUser() {
-  const res = await fetch("https://mealmatch-fj6j.onrender.com/api/register", {
+  const res = await fetch("http://localhost:3000/api/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -90,7 +90,7 @@ POST /api/login
 
 ```js
 async function loginUser() {
-  const res = await fetch("https://mealmatch-fj6j.onrender.com/api/login", {
+  const res = await fetch("http://localhost:3000/api/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
