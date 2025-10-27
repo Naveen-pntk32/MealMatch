@@ -6,9 +6,9 @@ const getNearbyCook = require("./getnear");
 route.post("/", async (req, res ) => {
     try {
         const { lat, lon ,radius } = req.body;
-        console.log(req.body);
+        // console.log(req.body);
          const token = req.cookies.token; 
-        console.log(token);
+        // console.log(token);
 
         if (lat == null || lon == null) {
             return res.status(400).json({ message: "lat and lon are required" });
