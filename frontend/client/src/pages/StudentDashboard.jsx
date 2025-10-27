@@ -42,8 +42,9 @@ const StudentDashboard = () => {
         setLoading(true);
 
         // Fetch subscription details for this student
+        const uid = await localStorage.getItem("uid")
         const subRes = await fetch(
-          "http://localhost:3000/api/subscribe/student/68fb4587120f3f3ac962802d"
+          `http://localhost:3000/api/subscribe/student/${uid}`
         );
         const subscriptionData = await subRes.json();
         setSubscription(subscriptionData.subscription);
