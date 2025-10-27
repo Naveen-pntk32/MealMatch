@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const BASE_URL = "https://mealmatch-fj6j.onrender.com";
+  const BASE_URL = "http://localhost:3000";
 
   // ✅ Get current user from API (session cookie)
   const fetchCurrentUser = async () => {
@@ -88,8 +88,8 @@ export const AuthProvider = ({ children }) => {
       // await fetchCurrentUser();
       const data = await res.json()
 
-      console.log(data);
-      
+      console.log(data.uid);
+      localStorage.setItem("uid", data.uid);      
       setUser(data);
       return { success: true, user };
     } catch (err) {
@@ -102,6 +102,8 @@ export const AuthProvider = ({ children }) => {
   // ✅ Logout user
   const logout = () => {
     setUser(null);
+      localStorage.removeItem("uid");      
+
     // Optionally call backend: fetch(`${BASE_URL}/api/logout`, { method: "POST", credentials: "include" });
   };
 

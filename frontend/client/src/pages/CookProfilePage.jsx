@@ -47,10 +47,10 @@ const CookProfilePage = () => {
       try {
         setIsLoading(true);
 
-        const cookRes = await axios.get(`https://mealmatch-fj6j.onrender.com/api/register/user/${id}`);
+        const cookRes = await axios.get(`http://localhost:3000/api/register/user/${id}`);
         setCook(cookRes.data);
 
-        const menuRes = await axios.get(`https://mealmatch-fj6j.onrender.com/api/addfood/${id}`);
+        const menuRes = await axios.get(`http://localhost:3000/api/addfood/${id}`);
         const menuData = menuRes.data.menu;
 
         // Extract price
@@ -107,6 +107,21 @@ const CookProfilePage = () => {
       return;
     }
 
+    const studentId = await localStorage.getItem('uid');
+     
+    if (studentId ) {
+      const check = await fetch(`http://localhost:3000/api/subscribe/check/${studentId}`);
+      const checkData = await check.json();
+      if (checkData.check) {
+        toast({
+          title: 'Already Subscribed',
+          description: 'You already have an active subscription',
+          variant: 'destructive'
+        });
+        return;
+      }
+    }
+
     setIsSubscribing(true);
     try {
       const orderRes = await axios.post('https://razorpay-project.onrender.com/create-order', {
@@ -124,28 +139,6 @@ const CookProfilePage = () => {
         name: 'MealMatch',
         description: `Subscribe to ${cook.name}`,
         order_id: order.id,
-        // handler: async function (response) {
-        //   toast({
-        //     title: 'Payment Successful!',
-        //     description: `You have successfully subscribed to ${cook.name}`,
-        //   });
-
-        //   await axios.post('https://razorpay-project.onrender.com/pay-orders', {
-        //     cookId: cook.id,
-        //     userId: user.id,
-        //     amount: order.amount,
-        //     razorpayPaymentId: response.razorpay_payment_id,
-        //     razorpayOrderId: response.razorpay_order_id,
-        //     razorpaySignature: response.razorpay_signature,
-        //   });
-        //   // console.log("trancation id" + "  "+ );
-
-          
-        //   axios.post("https://mealmatch-fj6j.onrender.com/api/subscribe",{
-            
-        //   })
-        //   navigate('/student/dashboard');
-        // },
 
 
         handler: async function (response) {
@@ -176,14 +169,14 @@ const CookProfilePage = () => {
     nextMonth.setMonth(today.getMonth() + 1);
 
   //  try {
-const res = await fetch("https://mealmatch-fj6j.onrender.com/api/subscribe", {
+const res = await fetch("http://localhost:3000/api/subscribe", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
     cookId: "68fb403bd6b0ee1e50f4e7ca",
-    studentId: "68fb4587120f3f3ac962802d",
+    studentId: "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ",
     planType: "MONTHLY", // ✅ Fixed: must be uppercase
     startDate: today.toISOString(),
     endDate: nextMonth.toISOString(),
