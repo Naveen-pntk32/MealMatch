@@ -16,7 +16,7 @@ export const getNearbyCooks = async (lat, lon, radius = 10000) => {
     }
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     
     return data.result; // array of nearby cooks
   } catch (error) {

@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
       // await fetchCurrentUser();
       const data = await res.json()
 
-      console.log(data.uid);
+      // console.log(data.uid);
       localStorage.setItem("uid", data.uid);      
       setUser(data);
       return { success: true, user };

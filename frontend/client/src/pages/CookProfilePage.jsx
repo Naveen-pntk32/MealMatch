@@ -144,9 +144,9 @@ const CookProfilePage = () => {
         handler: async function (response) {
   try {
     console.log("✅ Payment Successful!");
-    console.log("Payment ID:", response.razorpay_payment_id);
-    console.log("Order ID:", response.razorpay_order_id);
-    console.log("Signature:", response.razorpay_signature);
+    // console.log("Payment ID:", response.razorpay_payment_id);
+    // console.log("Order ID:", response.razorpay_order_id);
+    // console.log("Signature:", response.razorpay_signature);
 
     toast({
       title: "Payment Successful!",
@@ -175,9 +175,9 @@ const res = await fetch("http://localhost:3000/api/subscribe", {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    cookId: "68fb403bd6b0ee1e50f4e7ca",
-    studentId: "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ",
-    planType: "MONTHLY", // ✅ Fixed: must be uppercase
+    cookId: id,
+    studentId: studentId,
+    planType: "MONTHLY",
     startDate: today.toISOString(),
     endDate: nextMonth.toISOString(),
     transactions: [
@@ -196,7 +196,7 @@ const res = await fetch("http://localhost:3000/api/subscribe", {
   }
 
   const data = await res.json();
-  console.log("✅ Subscription created:", data);
+  // console.log("✅ Subscription created:", data);
 
   // Optional: show toast or redirect
   toast({
@@ -215,7 +215,7 @@ const res = await fetch("http://localhost:3000/api/subscribe", {
 // }
 
 
-    console.log("✅ Subscription created and transaction logged.");
+    // console.log("✅ Subscription created and transaction logged.");
     navigate("/student/dashboard");
   } catch (error) {
     console.error("Error while logging transaction or creating subscription:", error);

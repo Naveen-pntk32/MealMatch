@@ -51,7 +51,7 @@ const fetchNearbyCooks = async (lat, lon) => {
     });
     if (!res.ok) throw new Error("Failed to fetch nearby cooks");
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     
     return data.result || [];
   } catch (err) {

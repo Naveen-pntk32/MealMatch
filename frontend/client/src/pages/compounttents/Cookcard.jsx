@@ -4,7 +4,7 @@ import { StarIcon } from "lucide-react";
 import { Button } from "../../components/ui/button";
 
 const CookCard = ({ cook }) => {
-  console.log(cook);
+  // console.log(cook);
   
   const navigate = useNavigate();
 
