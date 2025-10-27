@@ -6,10 +6,15 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+
 app.use(cors({
-  origin: "http://localhost:5000", // ✅ no trailing slash
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow all origins (for dev/testing)
+    callback(null, true);
+  },
+  credentials: true,
 }));
+
 connectDB();
 const regRoute = require('./routes/auth/register');
 const loginRoute = require('./routes/auth/login');
