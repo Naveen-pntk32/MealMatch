@@ -7,6 +7,7 @@ import {
   StarIcon,
 } from "lucide-react";
 import React from "react";
+import { useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,7 +50,7 @@ const footerSections = [
   },
   {
     title: "Company",
-    links: ["Why MealMatch?", "Partner With Us", "FAQ", "Blog"],
+    links: ["Why MealMatch?", "FAQ"],
   },
   {
     title: "Support",
@@ -70,6 +71,7 @@ const socialIcons = [
 ];
 
 export const FoodeliDesign = (): JSX.Element => {
+  const [location, setLocation] = useLocation();
   return (
     <div className="bg-white w-full min-h-screen">
       <div className="bg-white w-full max-w-[1440px] mx-auto relative">
@@ -337,11 +339,21 @@ export const FoodeliDesign = (): JSX.Element => {
                   </h3>
                   <div className="space-y-4">
                     {section.links.map((link, linkIndex) => (
-                      <div key={linkIndex}>
-                        <span className="[font-family:'Poppins',Helvetica] font-medium text-gray-1 text-base leading-[30px]">
-                          {link}
-                        </span>
-                      </div>
+                      <button
+                        key={linkIndex}
+                        type="button"
+                        onClick={() => {
+                          const map: Record<string, string> = {
+                            "Why MealMatch?": "/why-mealmatch",
+                            "FAQ": "/faq",
+                          };
+                          const path = map[link];
+                          if (path) setLocation(path);
+                        }}
+                        className="block text-left [font-family:'Poppins',Helvetica] font-medium text-gray-1 text-base leading-[30px] hover:text-[#28b26f]"
+                      >
+                        {link}
+                      </button>
                     ))}
                   </div>
                 </div>
