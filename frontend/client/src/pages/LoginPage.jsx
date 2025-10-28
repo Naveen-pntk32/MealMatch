@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -11,6 +11,7 @@ import { ArrowLeftIcon, UserIcon, ChefHatIcon, CheckCircleIcon } from 'lucide-re
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, isLoading } = useAuth();
   const { toast } = useToast();
 
@@ -101,6 +102,13 @@ const LoginPage = () => {
       () => toast({ title: 'Error', description: 'Unable to get location', variant: 'destructive' })
     );
   };
+
+  // If navigated here with an initialTab in location.state, open that tab
+  useEffect(() => {
+    if (location && location.state && location.state.initialTab) {
+      setActiveTab(location.state.initialTab);
+    }
+  }, [location]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-4">
