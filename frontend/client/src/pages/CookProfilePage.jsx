@@ -74,23 +74,25 @@ const CookProfilePage = () => {
       }
       setCook(cookRes.data);
 
-      const menuRes = await axios.get(`http://localhost:3000/api/addfood/${id}`);
-      const menuData = menuRes.data.menu;
+      // Fetch menu; handle new cooks with no menu gracefully
+      try {
+        const menuRes = await axios.get(`http://localhost:3000/api/addfood/${id}`);
+        const menuData = menuRes.data?.menu || {};
+        setPrice(menuData.monthlyPrice ?? null);
+        const formattedMenu = Object.entries(menuData)
+          .filter(([key]) => ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].includes(key))
+          .map(([day, item]) => ({
+            day,
+            dish: item?.dish || item || '',
+            description: item?.description || ''
+          }));
+        setMonthlyMenu(formattedMenu);
+      } catch (menuErr) {
+        // No menu yet for this cook -> show empty menu and no price
+        setMonthlyMenu([]);
+        setPrice(null);
+      }
 
-      // Extract price
-      setPrice(menuData.monthlyPrice);
-
-      const formattedMenu = Object.entries(menuData)
-        .filter(([key]) =>
-          ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].includes(key)
-        )
-        .map(([day, item]) => ({
-          day,
-          dish: item.dish || item, // Support both new and old format
-          description: item.description || '' // Add description, default to empty string
-        }));
-
-      setMonthlyMenu(formattedMenu);
       // If this is the cook's own profile, fetch subscribers
       if (isOwnProfile) {
         await fetchSubscriptions(user._id);
@@ -374,8 +376,7 @@ const CookProfilePage = () => {
       <main className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <div className="sticky top-8">
-          <Card className="z-20 bg-white">
+          <Card className="sticky top-8">
             {isEditingProfile && isOwnProfile ? (
               <ProfileEditForm 
                 profile={cook} 
@@ -427,7 +428,7 @@ const CookProfilePage = () => {
                 )}
                 {isOwnProfile && (
                   <div className="text-sm text-gray-600 mt-2">
-                    This is your profile view. Students can subscribe to your meal service from here.
+                    {subscribers.length === 0 ? 'No subscribers yet' : 'This is your profile view. Students can subscribe to your meal service from here.'}
                   </div>
                 )}
               </div>
@@ -435,7 +436,7 @@ const CookProfilePage = () => {
           </Card>
           {/* Subscribers (only visible to cook on their own profile) */}
           {isOwnProfile && (
-            <Card className="mt-6 bg-white">
+            <Card className="mt-6 sticky top-8">
               <CardHeader>
                 <CardTitle>Subscribers ({subscribers.length})</CardTitle>
               </CardHeader>
@@ -460,7 +461,6 @@ const CookProfilePage = () => {
               </CardContent>
             </Card>
           )}
-          </div>
         </div>
 
         {/* Menu Section */}

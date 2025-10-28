@@ -1,6 +1,6 @@
 // HomePage.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import {
   ArrowRightIcon,
   ChevronDownIcon,
@@ -35,7 +35,7 @@ import CookCard from "./compounttents/Cookcard.jsx";
 
 const footerSections = [
   { title: "About", links: ["About Us", "Features", "News", "Menu"] },
-  { title: "Company", links: ["Why MealMatch?", "Partner With Us", "FAQ", "Blog"] },
+  { title: "Company", links: ["Why MealMatch?", "FAQ"] },
   { title: "Support", links: ["Account", "Support Center", "Feedback", "Contact Us", "Accessibilty"] },
 ];
 
@@ -68,7 +68,7 @@ const fetchNearbyCooks = async (lat, lon) => {
 };
 
 const HomePage = () => {
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
   const { user } = useAuth();
   const [cooks, setCooks] = useState([]);
   const [cookScrollPosition, setCookScrollPosition] = useState(0);
@@ -78,8 +78,8 @@ const HomePage = () => {
   const handleLoginClick = () => {
     if (user) {
       const dashboardPath = user.role === "STUDENT" ? "/student/dashboard" : "/cook/dashboard";
-      navigate(dashboardPath);
-    } else navigate("/login");
+      setLocation(dashboardPath);
+    } else setLocation("/login");
   };
 
   // Scroll nearby cooks
@@ -122,7 +122,7 @@ const HomePage = () => {
                     if (item.id) {
                       const el = document.getElementById(item.id);
                       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                      else navigate("/");
+                      else setLocation("/Homepage");
                     }
                   }}
                   className="flex items-center gap-1 text-sm font-medium text-gray-700"
@@ -159,7 +159,7 @@ const HomePage = () => {
                   key={cook._id}
                   onSelect={() => {
                     setSearchOpen(false);
-                    navigate(`/cook/${cook._id}`);
+                    setLocation(`/cook/${cook._id}`);
                   }}
                 >
                   {cook.name}
@@ -181,7 +181,7 @@ const HomePage = () => {
             <p className="font-medium text-gray-600 text-lg mb-8 max-w-[500px]">
               Monthly meal subscriptions from verified home cooks in Coimbatore. Fresh, homemade meals delivered to your doorstep.
             </p>
-            <Button onClick={() => navigate('/login', { state: { initialTab: 'register' } })} className="bg-[#28b26f] hover:bg-[#28b26f]/90 text-white px-8 py-3 rounded-[25px] font-medium text-lg flex items-center gap-2">
+            <Button onClick={() => setLocation('/login')} className="bg-[#28b26f] hover:bg-[#28b26f]/90 text-white px-8 py-3 rounded-[25px] font-medium text-lg flex items-center gap-2">
               Get Started <ArrowRightIcon className="w-5 h-5" />
             </Button>
           </div>
@@ -271,7 +271,20 @@ const HomePage = () => {
                 <ul className="space-y-3">
                   {section.links.map((link, linkIndex) => (
                     <li key={linkIndex}>
-                      <a href="#" className="font-medium text-gray-600 hover:text-[#28b26f] transition-colors duration-200">{link}</a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const map = {
+                            "Why MealMatch?": "/why-mealmatch",
+                            "FAQ": "/faq",
+                          };
+                          const path = map[link];
+                          if (path) setLocation(path);
+                        }}
+                        className="font-medium text-gray-600 hover:text-[#28b26f] transition-colors duration-200 text-left"
+                      >
+                        {link}
+                      </button>
                     </li>
                   ))}
                 </ul>
