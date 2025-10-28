@@ -22,13 +22,18 @@ const getCook = require('./routes/getNearbyCook/route');
 const verifyToken = require("./routes/middleware/middleware");
 const addfood = require("./routes/addfood/route");
 const subscriptionRoute = require('./routes/sbuscribe/route');
-const getcook = require("./routes/getCooks/getCooks")
-app.use("/api/register",regRoute);
-app.use("/api/login" , loginRoute);
-app.use("/api/nearByCook",getCook);
-app.use("/api/addfood",addfood);
-app.use("/api/subscribe",subscriptionRoute);
-app.use("/api/getcook",getcook)
+const getcook = require("./routes/getCooks/getCooks");
+const updateProfile = require("./routes/auth/update");
+const cookStats = require('./routes/getCooks/cookStats');
+
+app.use("/api/register", regRoute);
+app.use("/api/login", loginRoute);
+app.use("/api/nearByCook", getCook);
+app.use("/api/addfood", addfood);
+app.use("/api/subscribe", subscriptionRoute);
+app.use("/api/getcook", getcook);
+app.use("/api/profile", updateProfile);
+app.use("/api/getCooks", cookStats);
 
 
 app.listen(process.env.PORT,()=>{

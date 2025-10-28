@@ -42,12 +42,14 @@ const LoginPage = () => {
       return toast({ title: 'Error', description: 'Please enter email and password', variant: 'destructive' });
     }
 
-    const backendRole = selectedRole === 'student' ? 'STUDENT' : 'COOK';
-    const result = await login(formData.email, formData.password, backendRole);
+    const result = await login(formData.email, formData.password);
 
     if (result.success) {
       toast({ title: 'Login Successful', description: `Welcome back!` });
-      navigate(backendRole === 'STUDENT' ? '/student/dashboard' : '/cook/dashboard');
+      // Use the role from the returned user object
+      const dashboardPath = result.user.role === 'STUDENT' ? '/student/dashboard' : '/cook/dashboard';
+      console.log("[DEBUG] Redirecting to:", dashboardPath, "User:", result.user);
+      navigate(dashboardPath);
     } else {
       toast({ title: 'Login Failed', description: result.error || 'Invalid credentials', variant: 'destructive' });
     }

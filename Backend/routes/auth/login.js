@@ -17,6 +17,8 @@ route.post("/", async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        // User found, continue with login process
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: "Incorrect password" });
@@ -44,7 +46,10 @@ route.post("/", async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        res.status(200).json({ uid: user._id, role: user.role });
+        // Send the full user object (except password)
+        const userToReturn = user.toObject();
+        delete userToReturn.password;
+        res.status(200).json(userToReturn);
 
     } catch (error) {
         console.error("Login error:", error);

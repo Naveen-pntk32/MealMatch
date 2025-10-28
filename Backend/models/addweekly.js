@@ -7,13 +7,34 @@ const weeklyMenuSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  Monday: { type: String },
-  Tuesday: { type: String },
-  Wednesday: { type: String },
-  Thursday: { type: String },
-  Friday: { type: String },
-  Saturday: { type: String },
-  Sunday: { type: String },
+  Monday: { 
+    dish: { type: String },
+    description: { type: String }
+  },
+  Tuesday: { 
+    dish: { type: String },
+    description: { type: String }
+  },
+  Wednesday: { 
+    dish: { type: String },
+    description: { type: String }
+  },
+  Thursday: { 
+    dish: { type: String },
+    description: { type: String }
+  },
+  Friday: { 
+    dish: { type: String },
+    description: { type: String }
+  },
+  Saturday: { 
+    dish: { type: String },
+    description: { type: String }
+  },
+  Sunday: { 
+    dish: { type: String },
+    description: { type: String }
+  },
 
   // new field for monthly subscription price
   monthlyPrice: {
