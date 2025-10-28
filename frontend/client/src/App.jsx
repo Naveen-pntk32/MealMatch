@@ -33,23 +33,21 @@ function App() {
                 
                 {/* Protected Routes */}
                 <Route 
-                  // path="/student/dashboard" 
+                  path="/student/dashboard"
                   element={
-                    <ProtectedRoute role="student">
+                    <ProtectedRoute role="STUDENT">
                       <StudentDashboard />
                     </ProtectedRoute>
                   } 
                 />
                 <Route 
-                  // path="/cook/dashboard" 
+                  path="/cook/dashboard"
                   element={
-                    <ProtectedRoute role="cook">
-                      <CookDashboard  />
+                    <ProtectedRoute role="COOK">
+                      <CookDashboard />
                     </ProtectedRoute>
                   } 
                 />
-                <Route path='/student/dashboard' element={<StudentDashboard role="student"/>} />
-                <Route path='/cook/dashboard' element={<CookDashboard role="cook"/>} />
                 
                 {/* 404 Route */}
 

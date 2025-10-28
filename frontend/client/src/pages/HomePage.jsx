@@ -12,6 +12,13 @@ import {
 } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
+import {
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandItem,
+} from "../components/ui/command";
 import { useAuth } from "../context/AuthContext";
 
 import { CustomerTestimonialsSection } from "./sections/CustomerTestimonialsSection";
@@ -20,11 +27,11 @@ import FeaturedDishCard from "../components/DishCard.jsx";
 import CookCard from "./compounttents/Cookcard.jsx";
 
 // Navigation & footer sections
-const navigationItems = [
-  { label: "Services", hasDropdown: true },
-  { label: "Menu", hasDropdown: true },
-  { label: "Contact", hasDropdown: false },
-];
+  const navigationItems = [
+    { label: "Services", hasDropdown: true, id: "services" },
+    { label: "Menu", hasDropdown: true, id: "menu" },
+    { label: "Contact", hasDropdown: false, id: "contact" },
+  ];
 
 const footerSections = [
   { title: "About", links: ["About Us", "Features", "News", "Menu"] },
@@ -65,6 +72,7 @@ const HomePage = () => {
   const { user } = useAuth();
   const [cooks, setCooks] = useState([]);
   const [cookScrollPosition, setCookScrollPosition] = useState(0);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   // Login button handler
   const handleLoginClick = () => {
@@ -107,14 +115,25 @@ const HomePage = () => {
             <img className="w-[193px] h-[156px] object-cover" alt="Logo" src="/figmaAssets/1-3.png" />
             <nav className="flex items-center gap-8">
               {navigationItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-1">
-                  <span className="font-medium text-gray-700 text-sm">{item.label}</span>
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => {
+                    if (item.id) {
+                      const el = document.getElementById(item.id);
+                      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                      else navigate("/");
+                    }
+                  }}
+                  className="flex items-center gap-1 text-sm font-medium text-gray-700"
+                >
+                  <span>{item.label}</span>
                   {item.hasDropdown && <ChevronDownIcon className="w-2.5 h-2.5" />}
-                </div>
+                </button>
               ))}
             </nav>
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" className="w-12 h-12 rounded-full">
+              <Button onClick={() => setSearchOpen(true)} variant="outline" size="icon" className="w-12 h-12 rounded-full">
                 <SearchIcon className="w-5 h-5" />
               </Button>
               <Button
@@ -128,6 +147,28 @@ const HomePage = () => {
           </div>
         </header>
 
+        {/* Search Command Dialog */}
+        <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
+          <CommandInput placeholder="Search cooks or dishes..." />
+          <CommandList>
+            {cooks.length === 0 ? (
+              <CommandEmpty>No nearby cooks available</CommandEmpty>
+            ) : (
+              cooks.map((cook) => (
+                <CommandItem
+                  key={cook._id}
+                  onSelect={() => {
+                    setSearchOpen(false);
+                    navigate(`/cook/${cook._id}`);
+                  }}
+                >
+                  {cook.name}
+                </CommandItem>
+              ))
+            )}
+          </CommandList>
+        </CommandDialog>
+
         {/* Hero Section */}
         <section className="relative py-8 flex items-center justify-between">
           <div className="flex-1">
@@ -140,7 +181,7 @@ const HomePage = () => {
             <p className="font-medium text-gray-600 text-lg mb-8 max-w-[500px]">
               Monthly meal subscriptions from verified home cooks in Coimbatore. Fresh, homemade meals delivered to your doorstep.
             </p>
-            <Button className="bg-[#28b26f] hover:bg-[#28b26f]/90 text-white px-8 py-3 rounded-[25px] font-medium text-lg flex items-center gap-2">
+            <Button onClick={() => navigate('/login', { state: { initialTab: 'register' } })} className="bg-[#28b26f] hover:bg-[#28b26f]/90 text-white px-8 py-3 rounded-[25px] font-medium text-lg flex items-center gap-2">
               Get Started <ArrowRightIcon className="w-5 h-5" />
             </Button>
           </div>
@@ -153,7 +194,7 @@ const HomePage = () => {
         </section>
 
         {/* What We Serve */}
-        <section className="relative py-16 text-center">
+        <section id="services" className="relative py-16 text-center">
           <p className="font-semibold text-[#28b26f] text-lg tracking-[2.88px] mb-8">WHAT WE SERVE</p>
           <h2 className="font-bold text-[#010f1c] text-[45px] leading-[60px] mb-16">
             Your Monthly Meal Subscription Partner
@@ -208,8 +249,8 @@ const HomePage = () => {
         {/* Customer Testimonials */}
         <CustomerTestimonialsSection />
 
-        {/* Footer */}
-        <footer className="relative py-16 mt-16">
+  {/* Footer */}
+  <footer className="relative py-16 mt-16">
           <div className="flex items-start gap-16 mb-16">
             <div className="flex-1">
               <img className="w-[193px] h-[156px] object-cover mb-8" alt="Logo" src="/figmaAssets/1-3.png" />
@@ -236,7 +277,7 @@ const HomePage = () => {
                 </ul>
               </div>
             ))}
-            <div className="flex-1">
+            <div id="contact" className="flex-1">
               <h3 className="font-bold text-[#010f1c] text-xl mb-6">Get In Touch</h3>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
