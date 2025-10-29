@@ -42,9 +42,11 @@ route.post('/', async (req, res) => {
       locationName,
       locationLatitude,
       locationLongitude,
-      address,          // ✅ Added
+      address,
       email,
-      mobileNumber
+      mobileNumber,
+      aadharNumber,
+      aadharDocument
     } = req.body;
 
     // ✅ Check all required fields
@@ -60,6 +62,16 @@ route.post('/', async (req, res) => {
       !address             // ✅ Added to validation
     ) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // ✅ Check cook-specific required fields
+    if (role === 'COOK') {
+      if (!aadharNumber) {
+        return res.status(400).json({ message: "Aadhar number is required for cooks" });
+      }
+      if (!aadharDocument) {
+        return res.status(400).json({ message: "Aadhar document is required for cooks" });
+      }
     }
 
     // ✅ Check if user already exists
@@ -79,9 +91,10 @@ route.post('/', async (req, res) => {
       foodPreference,
       mobile: mobileNumber,
       password: hashedPassword,
+      ...(role === 'COOK' && { aadharNumber, aadharDocument }),
       location: {
         name: locationName,
-        address: address,   // ✅ Added
+        address: address,
         coordinates: {
           lat: locationLatitude,
           lon: locationLongitude
@@ -102,7 +115,11 @@ route.post('/', async (req, res) => {
 
   } catch (error) {
     console.error("Error creating user:", error); // remove in production
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ 
+      message: "Server error", 
+      error: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
@@ -134,6 +151,7 @@ route.put('/user/:id', async (req, res) => {
       email: updates.email || existingUser.email,
       mobile: parseInt(updates.mobileNumber) || existingUser.mobile,
       foodPreference: updates.foodPreference || existingUser.foodPreference,
+      profileImage: updates.profileImage || existingUser.profileImage,
       location: {
         name: existingUser.location.name, // Keep existing location name
         address: updates.address || existingUser.location.address,
@@ -164,6 +182,7 @@ route.put('/user/:id', async (req, res) => {
         role: user.role,
         foodPreference: user.foodPreference,
         mobileNumber: user.mobile,
+        profileImage: user.profileImage,
         location: user.location
       }
     });

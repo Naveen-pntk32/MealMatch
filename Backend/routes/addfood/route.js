@@ -1,8 +1,6 @@
 const express = require("express");
 const route = express.Router();
 const addfood = require('../../models/addweekly');
-const menuRouter = require('./menu');
-const priceRouter = require('./price');
 // const subscriptionSchema = require("../../models/subscriptions");
 const user = require("../../models/UserModel");
 
@@ -72,9 +70,4 @@ route.post('/', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
-
-// Mount sub-routers for separate concerns
-route.use('/menu', menuRouter);
-route.use('/price', priceRouter);
-
 module.exports = route;

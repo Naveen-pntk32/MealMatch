@@ -74,25 +74,26 @@ const CookProfilePage = () => {
       }
       setCook(cookRes.data);
 
-      // Fetch menu; handle new cooks with no menu gracefully
       try {
         const menuRes = await axios.get(`http://localhost:3000/api/addfood/${id}`);
         const menuData = menuRes.data?.menu || {};
-        setPrice(menuData.monthlyPrice ?? null);
+
+        // Extract price
+        setPrice(menuData.monthlyPrice || 0);
+
         const formattedMenu = Object.entries(menuData)
           .filter(([key]) => ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].includes(key))
-          .map(([day, item]) => ({
-            day,
-            dish: item?.dish || item || '',
-            description: item?.description || ''
-          }));
+          .map(([day, item]) => {
+            const dishVal = typeof item === 'object' ? (typeof item.dish === 'string' ? item.dish : '') : (typeof item === 'string' ? item : '');
+            const descVal = typeof item === 'object' ? (typeof item.description === 'string' ? item.description : '') : '';
+            return { day, dish: dishVal, description: descVal };
+          });
+
         setMonthlyMenu(formattedMenu);
       } catch (menuErr) {
-        // No menu yet for this cook -> show empty menu and no price
         setMonthlyMenu([]);
-        setPrice(null);
+        setPrice(0);
       }
-
       // If this is the cook's own profile, fetch subscribers
       if (isOwnProfile) {
         await fetchSubscriptions(user._id);
@@ -428,7 +429,7 @@ const CookProfilePage = () => {
                 )}
                 {isOwnProfile && (
                   <div className="text-sm text-gray-600 mt-2">
-                    {subscribers.length === 0 ? 'No subscribers yet' : 'This is your profile view. Students can subscribe to your meal service from here.'}
+                    This is your profile view. Students can subscribe to your meal service from here.
                   </div>
                 )}
               </div>
@@ -515,12 +516,12 @@ const CookProfilePage = () => {
                           </div>
                           <div>
                             <p className="font-semibold text-lg">{meal.day}</p>
-                            <p className="text-gray-600">{meal.dish}</p>
+                            <p className="text-gray-600">{typeof meal.dish === 'string' ? meal.dish : ''}</p>
                           </div>
                         </div>
                         <Badge variant="outline" className="text-[#28b26f] border-[#28b26f]">Fresh</Badge>
                       </div>
-                      {meal.description && (
+                      {typeof meal.description === 'string' && meal.description && (
                         <div className="px-6 pb-4">
                           <p className="text-sm text-gray-600 whitespace-pre-line">{meal.description}</p>
                         </div>
