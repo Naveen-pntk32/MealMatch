@@ -1,3 +1,4 @@
+// @refresh reset
 // Authentication Context for MealMatch
 import React, { createContext, useContext, useState, useEffect } from "react";
 
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const BASE_URL = "http://localhost:3000";
+  const BASE_URL = import.meta?.env?.VITE_API_URL || "http://localhost:3000";
 
   // ✅ Get current user from API (session cookie)
   const fetchCurrentUser = async (uid) => {

@@ -106,11 +106,14 @@ export const FoodeliDesign = (): JSX.Element => {
                 alt="Cart"
                 src="/figmaAssets/group-2.png"
               />
-              <Button className="bg-[#28b26f] hover:bg-[#28b26f]/90 rounded-[50px] px-5 py-[11px] h-auto">
+              <Button onClick={() => setLocation('/login')} className="bg-[#28b26f] hover:bg-[#28b26f]/90 rounded-[50px] px-5 py-[11px] h-auto">
                 <LogInIcon className="w-4 h-4 mr-2" />
                 <span className="[font-family:'Poppins',Helvetica] font-medium text-gray-6 text-sm">
                   Login
                 </span>
+              </Button>
+              <Button variant="outline" onClick={() => setLocation('/admin/login')} className="rounded-[50px] px-5 py-[11px] h-auto">
+                <span className="[font-family:'Poppins',Helvetica] font-medium text-sm">Admin</span>
               </Button>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { useLocation as useWouterLocation } from 'wouter';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -23,7 +24,7 @@ import axios from 'axios';
 
 const CookProfilePage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const [, setLocation] = useWouterLocation();
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -37,6 +38,7 @@ const CookProfilePage = () => {
   const [isEditingMenu, setIsEditingMenu] = useState(false);
   const [subscribers, setSubscribers] = useState([]);
   const [subsLoading, setSubsLoading] = useState(false);
+  const API_BASE = import.meta?.env?.VITE_API_URL || 'http://localhost:3000';
   
   const isOwnProfile = user && (user._id === id || (!id && user.role === 'COOK'));
 
@@ -61,7 +63,7 @@ const CookProfilePage = () => {
     try {
       if (!id) return;
       setIsLoading(true);
-      const cookRes = await axios.get(`http://localhost:3000/api/register/user/${id}`);
+      const cookRes = await axios.get(`${API_BASE}/api/register/user/${id}`);
       if (!cookRes.data || cookRes.data.message === 'User not found') {
         setCook(null);
         setIsLoading(false);
@@ -75,7 +77,7 @@ const CookProfilePage = () => {
       setCook(cookRes.data);
 
       try {
-        const menuRes = await axios.get(`http://localhost:3000/api/addfood/${id}`);
+        const menuRes = await axios.get(`${API_BASE}/api/addfood/${id}`);
         const menuData = menuRes.data?.menu || {};
 
         // Extract price
@@ -113,7 +115,7 @@ const CookProfilePage = () => {
   const fetchSubscriptions = async (cookId) => {
     try {
       setSubsLoading(true);
-      const res = await fetch(`http://localhost:3000/api/subscribe/cook/${user._id}`);
+      const res = await fetch(`${API_BASE}/api/subscribe/cook/${user._id}`);
       const data = await res.json();
       if (res.ok && data.success) {
         setSubscribers(data.subscriptions || []);
@@ -181,7 +183,7 @@ const CookProfilePage = () => {
       return;
     }
     // Check if already subscribed
-    const check = await fetch(`http://localhost:3000/api/subscribe/check/${studentId}`);
+    const check = await fetch(`${API_BASE}/api/subscribe/check/${studentId}`);
     const checkData = await check.json();
     if (checkData.check) {
       toast({
@@ -238,7 +240,7 @@ const CookProfilePage = () => {
     const nextMonth = new Date();
     nextMonth.setMonth(today.getMonth() + 1);
 
-    const res = await fetch("http://localhost:3000/api/subscribe", {
+    const res = await fetch(`${API_BASE}/api/subscribe`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -352,7 +354,12 @@ const CookProfilePage = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Button variant="outline" onClick={() => navigate('/')}>
+          <Button variant="outline" onClick={() => {
+            setLocation('/');
+            if (typeof window !== 'undefined') {
+              window.location.replace('/');
+            }
+          }}>
             <ArrowLeftIcon className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
@@ -363,7 +370,10 @@ const CookProfilePage = () => {
           {user ? (
             <Button variant="outline" onClick={() => {
               const dashboardPath = user.role === 'STUDENT' ? '/student/dashboard' : '/cook/dashboard';
-              navigate(dashboardPath);
+              setLocation(dashboardPath);
+              if (typeof window !== 'undefined') {
+                window.location.replace(dashboardPath);
+              }
             }}>
               Dashboard
             </Button>
