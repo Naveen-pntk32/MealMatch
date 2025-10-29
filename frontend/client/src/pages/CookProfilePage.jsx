@@ -377,7 +377,7 @@ const CookProfilePage = () => {
       <main className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <Card className="sticky top-8">
+          <Card>
             {isEditingProfile && isOwnProfile ? (
               <ProfileEditForm 
                 profile={cook} 
@@ -437,7 +437,7 @@ const CookProfilePage = () => {
           </Card>
           {/* Subscribers (only visible to cook on their own profile) */}
           {isOwnProfile && (
-            <Card className="mt-6 sticky top-8">
+            <Card className="mt-6">
               <CardHeader>
                 <CardTitle>Subscribers ({subscribers.length})</CardTitle>
               </CardHeader>
