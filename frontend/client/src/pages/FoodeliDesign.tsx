@@ -7,6 +7,7 @@ import {
   StarIcon,
 } from "lucide-react";
 import React from "react";
+import { useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,7 +50,7 @@ const footerSections = [
   },
   {
     title: "Company",
-    links: ["Why MealMatch?", "Partner With Us", "FAQ", "Blog"],
+    links: ["Why MealMatch?", "FAQ"],
   },
   {
     title: "Support",
@@ -70,6 +71,7 @@ const socialIcons = [
 ];
 
 export const FoodeliDesign = (): JSX.Element => {
+  const [location, setLocation] = useLocation();
   return (
     <div className="bg-white w-full min-h-screen">
       <div className="bg-white w-full max-w-[1440px] mx-auto relative">
@@ -104,11 +106,14 @@ export const FoodeliDesign = (): JSX.Element => {
                 alt="Cart"
                 src="/figmaAssets/group-2.png"
               />
-              <Button className="bg-[#28b26f] hover:bg-[#28b26f]/90 rounded-[50px] px-5 py-[11px] h-auto">
+              <Button onClick={() => setLocation('/login')} className="bg-[#28b26f] hover:bg-[#28b26f]/90 rounded-[50px] px-5 py-[11px] h-auto">
                 <LogInIcon className="w-4 h-4 mr-2" />
                 <span className="[font-family:'Poppins',Helvetica] font-medium text-gray-6 text-sm">
                   Login
                 </span>
+              </Button>
+              <Button variant="outline" onClick={() => setLocation('/admin/login')} className="rounded-[50px] px-5 py-[11px] h-auto">
+                <span className="[font-family:'Poppins',Helvetica] font-medium text-sm">Admin</span>
               </Button>
             </div>
           </div>
@@ -337,11 +342,21 @@ export const FoodeliDesign = (): JSX.Element => {
                   </h3>
                   <div className="space-y-4">
                     {section.links.map((link, linkIndex) => (
-                      <div key={linkIndex}>
-                        <span className="[font-family:'Poppins',Helvetica] font-medium text-gray-1 text-base leading-[30px]">
-                          {link}
-                        </span>
-                      </div>
+                      <button
+                        key={linkIndex}
+                        type="button"
+                        onClick={() => {
+                          const map: Record<string, string> = {
+                            "Why MealMatch?": "/why-mealmatch",
+                            "FAQ": "/faq",
+                          };
+                          const path = map[link];
+                          if (path) setLocation(path);
+                        }}
+                        className="block text-left [font-family:'Poppins',Helvetica] font-medium text-gray-1 text-base leading-[30px] hover:text-[#28b26f]"
+                      >
+                        {link}
+                      </button>
                     ))}
                   </div>
                 </div>

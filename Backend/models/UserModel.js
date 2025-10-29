@@ -33,6 +33,18 @@ const userSchema = new mongoose.Schema({
     enum: ['VEG', 'NONVEG'],
   },
 
+  profileImage: {
+    type: String,
+  },
+
+  aadharNumber: {
+    type: String,
+  },
+
+  aadharDocument: {
+    type: String,
+  },
+
   location: {
     name: {
       type: String,

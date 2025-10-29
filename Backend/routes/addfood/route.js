@@ -48,7 +48,10 @@ route.post('/', async (req, res) => {
     // Convert menuItems array into an object by day
     const menu = {};
     menuItems.forEach(item => {
-      menu[item.day] = item.dishName;
+      menu[item.day] = {
+        dish: item.dishName,
+        description: item.description || ''  // Add description, default to empty string if not provided
+      };
     });
 
     // Create or update weekly menu (upsert)

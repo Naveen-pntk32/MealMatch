@@ -4,9 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-export const MenuSection = (): JSX.Element => {
+type MenuSectionProps = {
+  id?: string;
+};
+
+export const MenuSection = ({ id }: MenuSectionProps): JSX.Element => {
   return (
-    <section className="relative py-16">
+    <section id={id ?? "menu"} className="relative py-16">
       <div className="text-center">
         <p className="font-semibold text-[#28b26f] text-lg tracking-[2.88px] mb-8">
           OUR MENU

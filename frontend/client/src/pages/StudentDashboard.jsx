@@ -88,11 +88,11 @@ const StudentDashboard = () => {
     navigate("/");
   };
 
-  // ✅ Get today’s meal from menu object
+  // ✅ Get today's meal from menu object
   const getTodaysMeal = () => {
     if (!menu) return null;
     const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
-    return menu[today] || null;
+    return menu[today]?.dish || null;
   };
 
   const getDeliveryStatus = () => {
@@ -326,7 +326,8 @@ const StudentDashboard = () => {
                             >
                               {day}
                             </p>
-                            <p className="text-sm text-gray-600">{menu[day]}</p>
+                            <p className="text-sm text-gray-600">{menu[day]?.dish}</p>
+                            <p className="text-xs text-gray-500">{menu[day]?.description}</p>
                           </div>
                         </div>
                         {isToday && (

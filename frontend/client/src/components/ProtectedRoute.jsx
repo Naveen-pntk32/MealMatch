@@ -23,7 +23,7 @@ const ProtectedRoute = ({ children, role }) => {
 
   if (role && user.role !== role) {
     // Redirect to appropriate dashboard based on user role
-    const redirectPath = user.role === 'student' ? '/student/dashboard' : '/cook/dashboard';
+    const redirectPath = user.role === 'STUDENT' ? '/student/dashboard' : '/cook/dashboard';
     return <Navigate to={redirectPath} replace />;
   }
 
