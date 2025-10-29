@@ -14,6 +14,8 @@ import CookProfilePage from './pages/CookProfilePage';
 import StudentDashboard from './pages/StudentDashboard';
 import CookDashboard from './pages/CookDashboard';
 import NotFound from './pages/not-found';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminLogin from './pages/admin/AdminLogin';
 
 // Protected Route Component
 import ProtectedRoute from './components/ProtectedRoute';
@@ -30,24 +32,13 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/cook/:id" element={<CookProfilePage />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
                 
                 {/* Protected Routes */}
-                <Route 
-                  path="/student/dashboard"
-                  element={
-                    <ProtectedRoute role="STUDENT">
-                      <StudentDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/cook/dashboard"
-                  element={
-                    <ProtectedRoute role="COOK">
-                      <CookDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
+                {/* Unprotected for SPA parity with Wouter routes */}
+                <Route path="/student/dashboard" element={<StudentDashboard />} />
+                <Route path="/cook/dashboard" element={<CookDashboard />} />
                 
                 {/* 404 Route */}
 
