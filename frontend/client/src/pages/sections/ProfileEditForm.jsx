@@ -13,12 +13,27 @@ const ProfileEditForm = ({ profile, onSave }) => {
     email: profile?.email || '',
     mobileNumber: profile?.mobile?.toString() || '',
     address: profile?.location?.address || '',
-    foodPreference: profile?.foodPreference || 'VEG'
+    foodPreference: profile?.foodPreference || 'VEG',
+    profileImage: profile?.profileImage || ''
   });
+  const [previewImage, setPreviewImage] = useState(profile?.profileImage || '');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result;
+        setPreviewImage(result);
+        setFormData(prev => ({ ...prev, profileImage: result }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -30,6 +45,7 @@ const ProfileEditForm = ({ profile, onSave }) => {
       if (formData.mobileNumber) updatedData.mobileNumber = parseInt(formData.mobileNumber);
       if (formData.foodPreference) updatedData.foodPreference = formData.foodPreference;
       if (formData.address) updatedData.address = formData.address;
+      if (formData.profileImage) updatedData.profileImage = formData.profileImage;
 
       const response = await fetch(`http://localhost:3000/api/register/user/${profile._id}`, {
         method: 'PUT',
@@ -47,6 +63,7 @@ const ProfileEditForm = ({ profile, onSave }) => {
         ...profile,
         ...data.user,
         mobileNumber: data.user.mobile || data.user.mobileNumber,
+        profileImage: data.user.profileImage || profile.profileImage,
         location: data.user.location || profile.location
       };
 
@@ -66,6 +83,24 @@ const ProfileEditForm = ({ profile, onSave }) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Image Upload */}
+          <div className="space-y-2">
+            <Label htmlFor="profileImage">Profile Picture</Label>
+            <div className="flex items-center gap-4">
+              {previewImage && (
+                <img src={previewImage} alt="Preview" className="w-20 h-20 rounded-full object-cover" />
+              )}
+              <Input 
+                id="profileImage" 
+                name="profileImage" 
+                type="file" 
+                accept="image/*" 
+                onChange={handleImageChange}
+                className="cursor-pointer"
+              />
+            </div>
+          </div>
+          
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>

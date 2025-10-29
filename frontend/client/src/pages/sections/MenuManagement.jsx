@@ -5,7 +5,6 @@ import { Textarea } from '../../components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { useToast } from '../../hooks/use-toast';
-import { handleUpdatePriceAction, updateMenuItemInState } from './menuManagementActions.js';
 import { 
   PlusIcon, 
   PencilIcon, 
@@ -20,11 +19,12 @@ const MenuManagement = ({ cookId, initialMenu = {}, onSave }) => {
   const { toast } = useToast();
   const [menuItems, setMenuItems] = useState(() => {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    return days.map(day => ({
-      day,
-      dish: initialMenu[day]?.dish || initialMenu[day] || '',
-      description: initialMenu[day]?.description || ''
-    }));
+    return days.map(day => {
+      const entry = initialMenu[day];
+      const dishVal = typeof entry === 'string' ? entry : (entry?.dish || '');
+      const descVal = typeof entry === 'object' ? (entry?.description || '') : '';
+      return { day, dish: dishVal, description: descVal };
+    });
   });
   const [editingDay, setEditingDay] = useState(null);
   const [expandedDay, setExpandedDay] = useState(null);
@@ -54,12 +54,13 @@ const MenuManagement = ({ cookId, initialMenu = {}, onSave }) => {
         description: item.description
       }));
 
-      const response = await fetch(`http://localhost:3000/api/addfood/menu`, {
-        method: 'PUT',
+      const response = await fetch(`http://localhost:3000/api/addfood`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           cookId,
           menuItems: menuItemsForApi,
+          monthlyPrice: parseFloat(monthlyPrice || 0)
         })
       });
 
@@ -85,40 +86,17 @@ const MenuManagement = ({ cookId, initialMenu = {}, onSave }) => {
     }
   };
 
-  const handleUpdateMenu = async () => {
-    try {
-      const menuItemsForApi = menuItems.map(item => ({
-        day: item.day,
-        dishName: item.dish,
-        description: item.description
-      }));
-
-      const response = await fetch(`http://localhost:3000/api/addfood/menu`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          cookId,
-          menuItems: menuItemsForApi
-        })
-      });
-
-      if (!response.ok) throw new Error('Failed to update menu');
-
-      setEditingDay(null);
-      if (onSave) onSave();
-      toast({ title: 'Success', description: 'Weekly menu updated successfully' });
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to update menu. Please try again.', variant: 'destructive' });
-    }
-  };
-
   const toggleDayExpansion = (index) => {
     setExpandedDay(expandedDay === index ? null : index);
   };
 
   const handleUpdateMenuItem = (index, field, value) => {
-    const updated = updateMenuItemInState(menuItems, index, field, value);
-    setMenuItems(updated);
+    const updatedItems = [...menuItems];
+    updatedItems[index] = {
+      ...updatedItems[index],
+      [field]: value
+    };
+    setMenuItems(updatedItems);
   };
 
   const handleUpdatePrice = async () => {
@@ -132,11 +110,24 @@ const MenuManagement = ({ cookId, initialMenu = {}, onSave }) => {
     }
 
     try {
-      await handleUpdatePriceAction({
-        apiBaseUrl: 'http://localhost:3000/api',
-        cookId,
-        monthlyPrice
+      // Convert current menu to menuItems array
+      const menuItemsForApi = menuItems.map(item => ({
+        day: item.day,
+        dishName: item.dish,
+        description: item.description
+      }));
+
+      const response = await fetch(`http://localhost:3000/api/addfood`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cookId,
+          menuItems: menuItemsForApi,
+          monthlyPrice: parseFloat(monthlyPrice)
+        })
       });
+
+      if (!response.ok) throw new Error('Failed to update price');
 
       // Notify parent component of the update
       if (onSave) {
@@ -175,9 +166,6 @@ const MenuManagement = ({ cookId, initialMenu = {}, onSave }) => {
                 Update Price
               </Button>
             </div>
-            <Button onClick={handleUpdateMenu} size="sm" className="bg-[#28b26f] text-white">
-              Update Menu
-            </Button>
           </div>
         </CardTitle>
       </CardHeader>

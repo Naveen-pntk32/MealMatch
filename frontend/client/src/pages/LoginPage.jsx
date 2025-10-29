@@ -24,15 +24,22 @@ const LoginPage = () => {
     confirmPassword: '',
     address: '',
     mobileNumber: '',
-    foodPreference: 'VEG',
-    locationName: 'Chennai',
+    foodPreference: '',
+    locationName: '',
     locationLatitude: 13.0827,
-    locationLongitude: 80.2707
+    locationLongitude: 80.2707,
+    // Cook-specific fields
+    aadharNumber: '',
+    aadharDocument: null
   });
-  const [locationSet, setLocationSet] = useState(false); // ✅ track if location is set
+  const [locationSet, setLocationSet] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, aadharDocument: e.target.files?.[0] || null });
   };
 
   // LOGIN
@@ -58,7 +65,17 @@ const LoginPage = () => {
   // REGISTER
   const handleRegister = async (e) => {
     e.preventDefault();
-    const { name, email, password, confirmPassword, address, mobileNumber, foodPreference, locationName, locationLatitude, locationLongitude } = formData;
+    const { name, email, password, confirmPassword, address, mobileNumber, foodPreference, locationName, locationLatitude, locationLongitude, aadharNumber, aadharDocument } = formData;
+
+    // Validation for cooks
+    if (selectedRole === 'cook') {
+      if (!aadharNumber) {
+        return toast({ title: 'Error', description: 'Aadhar number is required', variant: 'destructive' });
+      }
+      if (!aadharDocument) {
+        return toast({ title: 'Error', description: 'Aadhar document is required', variant: 'destructive' });
+      }
+    }
 
     if (!name || !email || !password || !confirmPassword || !address || !mobileNumber) {
       return toast({ title: 'Error', description: 'Please fill in all fields', variant: 'destructive' });
@@ -68,12 +85,41 @@ const LoginPage = () => {
     }
 
     const backendRole = selectedRole === 'student' ? 'STUDENT' : 'COOK';
+    
+    // Convert file to base64 if it's a cook registration
+    let aadharDocumentBase64 = null;
+    if (selectedRole === 'cook' && aadharDocument) {
+      try {
+        aadharDocumentBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(aadharDocument);
+        });
+      } catch (error) {
+        return toast({ title: 'Error', description: 'Failed to process document', variant: 'destructive' });
+      }
+    }
+
+    const payload = {
+      name,
+      email,
+      password,
+      role: backendRole,
+      foodPreference: foodPreference || 'VEG',
+      address,
+      mobileNumber,
+      locationName: locationName || address || 'User Location',
+      locationLatitude,
+      locationLongitude,
+      ...(selectedRole === 'cook' && { aadharNumber, aadharDocument: aadharDocumentBase64 })
+    };
 
     try {
       const response = await fetch('http://localhost:3000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role: backendRole, foodPreference, address, mobileNumber, locationName, locationLatitude, locationLongitude })
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json();
@@ -170,6 +216,17 @@ const LoginPage = () => {
                   <Input name="mobileNumber" type="tel" value={formData.mobileNumber} onChange={handleInputChange} required />
                   <Label>Address</Label>
                   <Input name="address" value={formData.address} onChange={handleInputChange} required />
+                  
+                  {/* Cook-specific: Aadhar Number */}
+                  {selectedRole === 'cook' && (
+                    <>
+                      <Label>Aadhar Number</Label>
+                      <Input name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} required />
+                      
+                      <Label>Aadhar Card Document</Label>
+                      <Input name="aadharDocument" type="file" accept="image/*,.pdf" onChange={handleFileChange} required />
+                    </>
+                  )}
 
                   {/* Location Button with Green Tick */}
                   <div className="flex items-center gap-2">
