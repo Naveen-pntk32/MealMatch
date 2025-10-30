@@ -39,13 +39,12 @@ const CookDashboard = () => {
 
     const fetchData = async () => {
       try {
-        // Fetch cook profile
-        const profileRes = await fetch(`http://localhost:3000/api/register/user/${user._id}`);
-        if (!profileRes.ok) throw new Error('Failed to fetch cook profile');
-        const profileData = await profileRes.json();
-        console.log('Cook Profile:', profileData);
-        setCookProfile(profileData);
-        setNotifications(profileData.notifications || []);
+
+        const res = await fetch(`http://localhost:3000api/register/user/${user.uid}`);
+        if (!res.ok) throw new Error('Failed to fetch cook profile');
+        const data = await res.json();
+        setCookProfile(data);
+
 
         // Fetch cook stats
         const statsRes = await fetch(`http://localhost:3000/api/getCooks/stats/${user._id}`);

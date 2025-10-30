@@ -30,13 +30,10 @@ const LoginPage = () => {
     confirmPassword: '',
     address: '',
     mobileNumber: '',
-    foodPreference: '',
+    foodPreference: 'VEG',
     locationName: '',
-    locationLatitude: 13.0827,
-    locationLongitude: 80.2707,
-    // Cook-specific fields
-    aadharNumber: '',
-    aadharDocument: null
+    locationLatitude: 0,
+    locationLongitude: 0
   });
   const [locationSet, setLocationSet] = useState(false);
 

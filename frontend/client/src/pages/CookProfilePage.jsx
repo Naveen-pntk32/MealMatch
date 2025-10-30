@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useLocation as useWouterLocation } from 'wouter';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -8,8 +7,6 @@ import { Avatar, AvatarImage, AvatarFallback } from '../components/ui/avatar';
 import { Separator } from '../components/ui/separator';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../hooks/use-toast';
-import ProfileEditForm from './sections/ProfileEditForm';
-import MenuManagement from './sections/MenuManagement';
 import { 
   ArrowLeftIcon, 
   StarIcon, 
@@ -17,14 +14,13 @@ import {
   ClockIcon,
   ChefHatIcon,
   CalendarIcon,
-  CheckCircleIcon,
-  PencilIcon
+  CheckCircleIcon
 } from 'lucide-react';
 import axios from 'axios';
 
 const CookProfilePage = () => {
   const { id } = useParams();
-  const [, setLocation] = useWouterLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -34,20 +30,6 @@ const CookProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [isEditingMenu, setIsEditingMenu] = useState(false);
-  const [subscribers, setSubscribers] = useState([]);
-  const [subsLoading, setSubsLoading] = useState(false);
-  const API_BASE = import.meta?.env?.VITE_API_URL || 'http://localhost:3000';
-  
-  const isOwnProfile = user && (user._id === id || (!id && user.role === 'COOK'));
-
-  // If no ID provided and user is a cook, use their own ID
-  useEffect(() => {
-    if (!id && user?.role === 'COOK') {
-      navigate(`/cook/${user._id}`);
-    }
-  }, [user, id]);
 
   // ✅ Load Razorpay script
   useEffect(() => {
@@ -59,87 +41,41 @@ const CookProfilePage = () => {
     return () => document.body.removeChild(script);
   }, []);
 
-  const fetchCookData = async () => {
-    try {
-      if (!id) return;
-      setIsLoading(true);
-      const cookRes = await axios.get(`${API_BASE}/api/register/user/${id}`);
-      if (!cookRes.data || cookRes.data.message === 'User not found') {
-        setCook(null);
-        setIsLoading(false);
-        toast({
-          title: "Cook Not Found",
-          description: "Cook profile not found. Please contact support.",
-          variant: "destructive",
-        });
-        return;
-      }
-      setCook(cookRes.data);
-
-      try {
-        const menuRes = await axios.get(`${API_BASE}/api/addfood/${id}`);
-        const menuData = menuRes.data?.menu || {};
-
-        // Extract price
-        setPrice(menuData.monthlyPrice || 0);
-
-        const formattedMenu = Object.entries(menuData)
-          .filter(([key]) => ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].includes(key))
-          .map(([day, item]) => {
-            const dishVal = typeof item === 'object' ? (typeof item.dish === 'string' ? item.dish : '') : (typeof item === 'string' ? item : '');
-            const descVal = typeof item === 'object' ? (typeof item.description === 'string' ? item.description : '') : '';
-            return { day, dish: dishVal, description: descVal };
-          });
-
-        setMonthlyMenu(formattedMenu);
-      } catch (menuErr) {
-        setMonthlyMenu([]);
-        setPrice(0);
-      }
-      // If this is the cook's own profile, fetch subscribers
-      if (isOwnProfile) {
-        await fetchSubscriptions(user._id);
-      }
-    } catch (error) {
-      setCook(null);
-      toast({
-        title: "Error",
-        description: "Failed to load cook details. Please try again later.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchSubscriptions = async (cookId) => {
-    try {
-      setSubsLoading(true);
-      const res = await fetch(`${API_BASE}/api/subscribe/cook/${user._id}`);
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setSubscribers(data.subscriptions || []);
-      } else {
-        console.error('Failed to load subscriptions', data);
-        setSubscribers([]);
-      }
-    } catch (err) {
-      console.error('Error fetching subscriptions:', err);
-      setSubscribers([]);
-    } finally {
-      setSubsLoading(false);
-    }
-  };
-
   // ✅ Fetch cook + menu data
   useEffect(() => {
-    fetchCookData();
-  }, [id, toast, user]); // Add user dependency to refresh when login state changes
+    const fetchCookData = async () => {
+      try {
+        setIsLoading(true);
 
-  // Only fetch data when necessary props change
-  useEffect(() => {
+        const cookRes = await axios.get(`http://localhost:3000api/register/user/${id}`);
+        setCook(cookRes.data);
+
+        const menuRes = await axios.get(`http://localhost:3000api/addfood/${id}`);
+        const menuData = menuRes.data.menu;
+
+        // Extract price
+        setPrice(menuData.monthlyPrice);
+
+        const formattedMenu = Object.entries(menuData)
+          .filter(([key]) =>
+            ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].includes(key)
+          )
+          .map(([day, dishName]) => ({ day, dishName }));
+
+        setMonthlyMenu(formattedMenu);
+      } catch (error) {
+        console.error("Error fetching cook data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load cook details. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchCookData();
-  }, [id, user]);
+  }, [id, toast]);
 
   // ✅ Handle Razorpay payment
   const handleSubscribe = async (amt) => {
@@ -171,27 +107,19 @@ const CookProfilePage = () => {
       return;
     }
 
-    // Use user._id and cook._id for MongoDB ObjectIds
-    const studentId = user?._id;
-    const cookId = cook?._id;
-    if (!studentId || !cookId) {
-      toast({
-        title: 'Error',
-        description: 'Invalid user or cook ID. Please try again.',
-        variant: 'destructive'
-      });
-      return;
-    }
-    // Check if already subscribed
-    const check = await fetch(`${API_BASE}/api/subscribe/check/${studentId}`);
-    const checkData = await check.json();
-    if (checkData.check) {
-      toast({
-        title: 'Already Subscribed',
-        description: 'You already have an active subscription',
-        variant: 'destructive'
-      });
-      return;
+    const studentId = await localStorage.getItem('uid');
+     
+    if (studentId ) {
+      const check = await fetch(`http://localhost:3000api/subscribe/check/${studentId}`);
+      const checkData = await check.json();
+      if (checkData.check) {
+        toast({
+          title: 'Already Subscribed',
+          description: 'You already have an active subscription',
+          variant: 'destructive'
+        });
+        return;
+      }
     }
 
     setIsSubscribing(true);
@@ -227,8 +155,8 @@ const CookProfilePage = () => {
 
     // Step 1️⃣: Log the transaction to Razorpay backend
     await axios.post("https://razorpay-project.onrender.com/pay-orders", {
-      cookId: cookId,
-      userId: studentId,
+      cookId: cook.id,
+      userId: user.id,
       amount: order.amount / 100, // convert from paise to ₹
       razorpayPaymentId: response.razorpay_payment_id,
       razorpayOrderId: response.razorpay_order_id,
@@ -240,30 +168,32 @@ const CookProfilePage = () => {
     const nextMonth = new Date();
     nextMonth.setMonth(today.getMonth() + 1);
 
-    const res = await fetch(`${API_BASE}/api/subscribe`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+  //  try {
+const res = await fetch("http://localhost:3000api/subscribe", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    cookId: id,
+    studentId: studentId,
+    planType: "MONTHLY",
+    startDate: today.toISOString(),
+    endDate: nextMonth.toISOString(),
+    transactions: [
+      {
+        transactionId: response.razorpay_payment_id,
+        date: new Date().toISOString(),
       },
-      body: JSON.stringify({
-        cookId: cookId,
-        studentId: studentId,
-        planType: "MONTHLY",
-        startDate: today.toISOString(),
-        endDate: nextMonth.toISOString(),
-        transactions: [
-          {
-            transactionId: response.razorpay_payment_id,
-            date: new Date().toISOString(),
-          },
-        ],
-      }),
-    });
+    ],
+  }),
+});
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Subscription creation failed");
-    }
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Subscription creation failed");
+  }
 
   const data = await res.json();
   // console.log("✅ Subscription created:", data);
@@ -327,13 +257,6 @@ const CookProfilePage = () => {
       </div>
     );
   }
-  if (!cook) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg font-medium text-red-600">Cook profile not found. Please contact support.</p>
-      </div>
-    );
-  }
 
   if (!cook) {
     return (
@@ -354,12 +277,7 @@ const CookProfilePage = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Button variant="outline" onClick={() => {
-            setLocation('/');
-            if (typeof window !== 'undefined') {
-              window.location.replace('/');
-            }
-          }}>
+          <Button variant="outline" onClick={() => navigate('/')}>
             <ArrowLeftIcon className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
@@ -370,10 +288,7 @@ const CookProfilePage = () => {
           {user ? (
             <Button variant="outline" onClick={() => {
               const dashboardPath = user.role === 'STUDENT' ? '/student/dashboard' : '/cook/dashboard';
-              setLocation(dashboardPath);
-              if (typeof window !== 'undefined') {
-                window.location.replace(dashboardPath);
-              }
+              navigate(dashboardPath);
             }}>
               Dashboard
             </Button>
@@ -387,159 +302,64 @@ const CookProfilePage = () => {
       <main className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <Card>
-            {isEditingProfile && isOwnProfile ? (
-              <ProfileEditForm 
-                profile={cook} 
-                onSave={(updatedProfile) => {
-                  if (updatedProfile) {
-                    setCook(updatedProfile);
-                  }
-                  setIsEditingProfile(false);
-                }}
-              />
-            ) : (
-              <CardHeader className="text-center relative">
-                {isOwnProfile && (
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    className="absolute right-4 top-4"
-                    onClick={() => setIsEditingProfile(true)}
-                  >
-                    <PencilIcon className="h-4 w-4" />
-                  </Button>
-                )}
-                <Avatar className="w-32 h-32 mx-auto mb-4">
-                  <AvatarImage src={cook.profileImage} alt={cook.name} />
-                  <AvatarFallback className="text-2xl">{cook.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                </Avatar>
-                <CardTitle className="text-2xl text-gray-800">{cook.name}</CardTitle>
-                <div className="flex items-center justify-center gap-2 mt-2">
-                  <StarIcon className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  <span className="font-semibold text-lg">{cook.rating}</span>
-                </div>
-                <Badge className={`mt-3 ${cook.isVeg ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
-                  {cook.isVeg ? 'Pure Vegetarian' : 'Veg & Non-Veg'}
-                </Badge>
-              </CardHeader>
-            )}
+          <Card className="sticky top-8">
+            <CardHeader className="text-center">
+              <Avatar className="w-32 h-32 mx-auto mb-4">
+                <AvatarImage src={cook.profileImage} alt={cook.name} />
+                <AvatarFallback className="text-2xl">{cook.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              </Avatar>
+              <CardTitle className="text-2xl text-gray-800">{cook.name}</CardTitle>
+              <div className="flex items-center justify-center gap-2 mt-2">
+                <StarIcon className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                <span className="font-semibold text-lg">{cook.rating}</span>
+              </div>
+              <Badge className={`mt-3 ${cook.isVeg ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
+                {cook.isVeg ? 'Pure Vegetarian' : 'Veg & Non-Veg'}
+              </Badge>
+            </CardHeader>
             <CardContent>
               <div className="text-center">
                 <p className="text-3xl font-bold text-[#28b26f] mb-2">₹{price}</p>
                 <p className="text-gray-600 mb-4">per month</p>
-                {!isOwnProfile && user?.role === 'STUDENT' && (
-                  <Button
-                    onClick={() => handleSubscribe(price)}
-                    disabled={isSubscribing}
-                    className="w-full bg-[#28b26f] hover:bg-[#28b26f]/90 h-12 text-white font-semibold"
-                  >
-                    {isSubscribing ? "Processing..." : "Subscribe Now"}
-                  </Button>
-                )}
-                {isOwnProfile && (
-                  <div className="text-sm text-gray-600 mt-2">
-                    This is your profile view. Students can subscribe to your meal service from here.
-                  </div>
-                )}
+                <Button
+                  onClick={() => handleSubscribe(price)}
+                  disabled={isSubscribing}
+                  className="w-full bg-[#28b26f] hover:bg-[#28b26f]/90 h-12 text-white font-semibold"
+                >
+                  {isSubscribing ? "Processing..." : "Subscribe Now"}
+                </Button>
               </div>
             </CardContent>
           </Card>
-          {/* Subscribers (only visible to cook on their own profile) */}
-          {isOwnProfile && (
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Subscribers ({subscribers.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {subsLoading ? (
-                  <p className="text-sm text-gray-500">Loading subscribers...</p>
-                ) : subscribers.length === 0 ? (
-                  <p className="text-sm text-gray-500">No subscribers yet</p>
-                ) : (
-                  <ul className="space-y-3">
-                    {subscribers.map((sub) => (
-                      <li key={sub._id} className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">{sub.studentId?.name || 'Unknown'}</p>
-                          <p className="text-sm text-gray-500">{sub.studentId?.email}</p>
-                        </div>
-                        <Badge variant="outline" className="text-[#28b26f]">{sub.status}</Badge>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </CardContent>
-            </Card>
-          )}
         </div>
 
         {/* Menu Section */}
         <div className="lg:col-span-2 space-y-8">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <CalendarIcon className="w-6 h-6 text-[#28b26f]" />
-                  <CardTitle className="text-2xl">Weekly Menu</CardTitle>
-                </div>
-                {isOwnProfile && !isEditingMenu && (
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    onClick={() => setIsEditingMenu(true)}
-                  >
-                    <PencilIcon className="h-4 w-4" />
-                  </Button>
-                )}
+              <div className="flex items-center gap-3 mb-2">
+                <CalendarIcon className="w-6 h-6 text-[#28b26f]" />
+                <CardTitle className="text-2xl">Weekly Menu</CardTitle>
               </div>
               <p className="text-gray-600">Fresh meals prepared daily</p>
             </CardHeader>
             <CardContent>
-              {isEditingMenu && isOwnProfile ? (
-                <MenuManagement 
-                  cookId={id}
-                  initialMenu={{
-                    ...monthlyMenu.reduce((acc, meal) => {
-                      acc[meal.day] = {
-                        dish: meal.dish,
-                        description: meal.description
-                      };
-                      return acc;
-                    }, {}),
-                    monthlyPrice: price
-                  }}
-                  onSave={async () => {
-                    await fetchCookData(); // Refresh data first
-                    setIsEditingMenu(false); // Then close the edit mode
-                  }}
-                  onCancel={() => setIsEditingMenu(false)}
-                />
-              ) : (
-                <div className="grid gap-4">
-                  {monthlyMenu.map((meal, index) => (
-                    <div key={index} className="flex flex-col rounded-lg border border-gray-200 hover:border-[#28b26f] transition-colors">
-                      <div className="flex items-center justify-between p-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-[#28b26f] rounded-full flex items-center justify-center">
-                            <span className="text-white font-semibold text-sm">{meal.day.substring(0,3)}</span>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-lg">{meal.day}</p>
-                            <p className="text-gray-600">{typeof meal.dish === 'string' ? meal.dish : ''}</p>
-                          </div>
-                        </div>
-                        <Badge variant="outline" className="text-[#28b26f] border-[#28b26f]">Fresh</Badge>
+              <div className="grid gap-4">
+                {monthlyMenu.map((meal, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-[#28b26f] transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-[#28b26f] rounded-full flex items-center justify-center">
+                        <span className="text-white font-semibold text-sm">{meal.day.substring(0,3)}</span>
                       </div>
-                      {typeof meal.description === 'string' && meal.description && (
-                        <div className="px-6 pb-4">
-                          <p className="text-sm text-gray-600 whitespace-pre-line">{meal.description}</p>
-                        </div>
-                      )}
+                      <div>
+                        <p className="font-semibold text-lg">{meal.day}</p>
+                        <p className="text-gray-600">{meal.dishName}</p>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                    <Badge variant="outline" className="text-[#28b26f] border-[#28b26f]">Fresh</Badge>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </div>
