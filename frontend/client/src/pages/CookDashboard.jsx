@@ -22,41 +22,50 @@ import {
   TrendingUpIcon
 } from 'lucide-react';
 
+
 const CookDashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { toast } = useToast();
 
   const [cookProfile, setCookProfile] = useState(null);
-  const [subscribers, setSubscribers] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
+  const [cookStats, setCookStats] = useState({ activeSubscribers: 0 });
 
   // Fetch cook profile by user ID
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?._id) return;
 
-    const fetchCookProfile = async () => {
+    const fetchData = async () => {
       try {
+
         const res = await fetch(`http://localhost:3000api/register/user/${user.uid}`);
         if (!res.ok) throw new Error('Failed to fetch cook profile');
         const data = await res.json();
         setCookProfile(data);
 
-        // TODO: Replace with your real API calls
-        setSubscribers(data.subscribers || []); // assume backend sends subscribers array
-        setNotifications(data.notifications || []); // assume backend sends notifications array
+
+        // Fetch cook stats
+        const statsRes = await fetch(`http://localhost:3000/api/getCooks/stats/${user._id}`);
+        if (!statsRes.ok) {
+          console.error('Stats response not OK:', await statsRes.text());
+          throw new Error('Failed to fetch cook stats');
+        }
+        const statsData = await statsRes.json();
+        console.log('Cook Stats:', statsData);
+        setCookStats(statsData);
       } catch (error) {
         console.error(error);
         toast({
           title: 'Error',
-          description: 'Could not load cook profile. Please try again.',
+          description: 'Could not load cook profile or stats. Please try again.',
         });
       }
     };
 
-    fetchCookProfile();
-  }, [user?.uid, toast]);
+    fetchData();
+  }, [user?._id, toast]);
 
   const handleLogout = () => {
     logout();
@@ -71,8 +80,8 @@ const CookDashboard = () => {
   };
 
   const getMonthlyStats = () => {
-    const subscriberCount = subscribers.length;
-    const monthlyRevenue = subscriberCount * (cookProfile?.monthlyPrice || 0);
+    const subscriberCount = cookStats.activeSubscribers || 0;
+    const monthlyRevenue = cookStats.monthlyRevenue || 0;
     const averageRating = cookProfile?.rating || 0;
     const totalReviews = cookProfile?.reviews?.length || 0;
 
@@ -194,58 +203,21 @@ const CookDashboard = () => {
                   <p className="text-sm text-gray-600">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
               </div>
-              <Badge className="bg-[#28b26f] text-white text-lg px-4 py-2">{subscribers.length} Orders</Badge>
+              <Badge className="bg-[#28b26f] text-white text-lg px-4 py-2">{cookStats.activeSubscribers} Orders</Badge>
             </CardContent>
           </Card>
         )}
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="subscribers">My Subscribers</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
           </TabsList>
 
           {/* Overview */}
           <TabsContent value="overview" className="space-y-6">
             {/* Add Overview Content Here */}
-          </TabsContent>
-
-          {/* Subscribers */}
-          <TabsContent value="subscribers">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <UsersIcon className="w-5 h-5 text-[#28b26f]" />
-                  My Subscribers ({subscribers.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {subscribers.length > 0 ? (
-                  <div className="space-y-4">
-                    {subscribers.map((subscriber, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                        <div className="flex items-center gap-4">
-                          <Avatar>
-                            <AvatarFallback>{subscriber.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h4 className="font-semibold">{subscriber.name}</h4>
-                            <p className="text-sm text-gray-600">{subscriber.email}</p>
-                          </div>
-                        </div>
-                        <Badge className={`px-2 py-1 text-xs ${subscriber.subscriptionStatus === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                          {subscriber.subscriptionStatus}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-gray-500 py-12">No Subscribers Yet</p>
-                )}
-              </CardContent>
-            </Card>
           </TabsContent>
 
           {/* Notifications */}
