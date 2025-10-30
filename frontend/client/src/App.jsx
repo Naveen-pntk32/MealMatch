@@ -17,6 +17,7 @@ import NotFound from './pages/not-found';
 
 // Protected Route Component
 import ProtectedRoute from './components/ProtectedRoute';
+import MealPlanEditor from './pages/EditFood';
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/cook/:id" element={<CookProfilePage />} />
+                {/* <Route path="/edit" element={<MealPlanEditor />} /> */}
+
                 
                 {/* Protected Routes */}
                 <Route 
@@ -52,7 +55,6 @@ function App() {
                 <Route path='/cook/dashboard' element={<CookDashboard role="cook"/>} />
                 
                 {/* 404 Route */}
-
                 <Route path="*" element={<NotFound />} />
                       
               </Routes>

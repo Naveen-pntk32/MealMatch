@@ -24,9 +24,9 @@ const LoginPage = () => {
     address: '',
     mobileNumber: '',
     foodPreference: 'VEG',
-    locationName: 'Chennai',
-    locationLatitude: 13.0827,
-    locationLongitude: 80.2707
+    locationName: '',
+    locationLatitude: 0,
+    locationLongitude: 0
   });
   const [locationSet, setLocationSet] = useState(false); // ✅ track if location is set
 

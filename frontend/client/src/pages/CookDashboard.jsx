@@ -38,7 +38,7 @@ const CookDashboard = () => {
 
     const fetchCookProfile = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/register/user/${user.uid}`);
+        const res = await fetch(`http://localhost:3000api/register/user/${user.uid}`);
         if (!res.ok) throw new Error('Failed to fetch cook profile');
         const data = await res.json();
         setCookProfile(data);

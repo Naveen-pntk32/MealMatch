@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
     },
     address: {
       type: String,
-      required: true, // optional if not always available
+      required: true,
     },
     coordinates: {
       lat: {
@@ -52,6 +52,13 @@ const userSchema = new mongoose.Schema({
         required: true,
       },
     },
+  },
+
+  // 🟡 New Field Added
+  status: {
+    type: String,
+    enum: ['ACTIVE', 'SUSPENDED'],
+    default: 'ACTIVE',
   },
 
   createdAt: {

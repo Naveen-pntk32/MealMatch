@@ -67,4 +67,46 @@ route.post('/', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+route.patch("/:cookId", async (req, res) => {
+  try {
+    const { cookId } = req.params;
+    const updates = req.body;
+
+    // ✅ Ensure there’s at least one valid field to update
+    const validFields = [
+      "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "monthlyPrice"
+    ];
+    const updateData = {};
+
+    for (const key of validFields) {
+      if (updates[key] !== undefined) {
+        updateData[key] = updates[key];
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: "No valid fields provided for update" });
+    }
+
+    // ✅ Find and update the cook's weekly menu
+    const updatedMenu = await addfood.findOneAndUpdate(
+      { _id : cookId },
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!updatedMenu) {
+      return res.status(404).json({ message: "Weekly menu not found for this cook" });
+    }
+
+    res.status(200).json({
+      message: "Weekly menu updated successfully",
+      updatedMenu,
+    });
+  } catch (error) {
+    console.error("Error updating weekly menu:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 module.exports = route;

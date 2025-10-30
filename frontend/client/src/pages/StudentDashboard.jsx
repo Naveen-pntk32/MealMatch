@@ -44,7 +44,7 @@ const StudentDashboard = () => {
         // Fetch subscription details for this student
         const uid = await localStorage.getItem("uid")
         const subRes = await fetch(
-          `http://localhost:3000/api/subscribe/student/${uid}`
+          `http://localhost:3000api/subscribe/student/${uid}`
         );
         const subscriptionData = await subRes.json();
         setSubscription(subscriptionData.subscription);
@@ -52,7 +52,7 @@ const StudentDashboard = () => {
         // Fetch cook + menu data
         if (subscriptionData?.subscription?.cookId) {
           const cookRes = await fetch(
-            `http://localhost:3000/api/getcook/full/${subscriptionData.subscription.cookId}`
+            `http://localhost:3000api/getcook/full/${subscriptionData.subscription.cookId}`
           );
           const data = await cookRes.json();
           setCook(data.cook);
