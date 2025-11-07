@@ -1,7 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Separator } from '../../components/ui/separator';
+import { useToast } from '../../hooks/use-toast';
+
+const API_BASE = import.meta?.env?.VITE_API_URL || 'http://localhost:3000';
 
 const SidebarItem = ({ label, active, onClick }) => (
   <button
@@ -14,87 +17,196 @@ const SidebarItem = ({ label, active, onClick }) => (
   </button>
 );
 
-const StatCard = ({ label, value }) => (
+const StatCard = ({ label, value, loading }) => (
   <Card>
     <CardContent className="p-4">
       <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-2xl font-semibold">{value}</p>
+      <p className="text-2xl font-semibold">{loading ? '...' : value}</p>
     </CardContent>
   </Card>
 );
 
 const AdminDashboard = () => {
   const [section, setSection] = useState('Dashboard');
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ totalCooks: 0, pendingCooks: 0, verifiedCooks: 0, rejectedCooks: 0, totalUsers: 0 });
+  const [activities, setActivities] = useState([]);
+  const [pendingCooks, setPendingCooks] = useState([]);
+  const [verifiedCooks, setVerifiedCooks] = useState([]);
+  const [rejectedCooks, setRejectedCooks] = useState([]);
+  const [users, setUsers] = useState([]);
+  const { toast } = useToast();
 
-  // Mock data for frontend-only view
-  const baseData = useMemo(() => ({
-    totals: { totalCooks: 42, pendingCooks: 7, verifiedCooks: 31, totalUsers: 320 },
-    recentActivities: [
-      { id: 1, text: 'New cook registered: Priya Sharma' },
-      { id: 2, text: 'User subscribed to Cook #18' },
-      { id: 3, text: 'Cook #12 verified by admin' },
-      { id: 4, text: 'Rejected cook application: Incomplete docs' },
-    ],
-    users: [ { id: 'U001', name: 'Rohit' }, { id: 'U002', name: 'Sneha' }, { id: 'U003', name: 'Vikram' } ],
-  }), []);
+  // Fetch dashboard stats
+  const fetchStats = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/admin/dashboard/stats`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch stats');
+      const data = await response.json();
+      if (data.success) {
+        setStats(data.stats);
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+      toast({ title: 'Error', description: 'Failed to load dashboard stats', variant: 'destructive' });
+    }
+  };
 
-  const [pendingCooks, setPendingCooks] = useState([ { id: 'C101', name: 'Anil Kumar' }, { id: 'C102', name: 'Ritika Verma' } ]);
-  const [verifiedCooks, setVerifiedCooks] = useState([ { id: 'C001', name: 'Meera' }, { id: 'C002', name: 'Arun' } ]);
-  const [rejectedCooks, setRejectedCooks] = useState([ { id: 'C900', name: 'Dev Test' } ]);
+  // Fetch activities
+  const fetchActivities = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/admin/dashboard/activities`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch activities');
+      const data = await response.json();
+      if (data.success) {
+        setActivities(data.activities || []);
+      }
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    }
+  };
 
-  const totals = {
-    totalCooks: pendingCooks.length + verifiedCooks.length + rejectedCooks.length,
-    pendingCooks: pendingCooks.length,
-    verifiedCooks: verifiedCooks.length,
-    totalUsers: baseData.totals.totalUsers,
+  // Fetch cooks by status
+  const fetchCooks = async (status) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/admin/cooks?status=${status}`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error(`Failed to fetch ${status} cooks`);
+      const data = await response.json();
+      if (data.success) {
+        return data.cooks || [];
+      }
+      return [];
+    } catch (error) {
+      console.error(`Error fetching ${status} cooks:`, error);
+      return [];
+    }
+  };
+
+  // Fetch all users
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/admin/users`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch users');
+      const data = await response.json();
+      if (data.success) {
+        setUsers(data.users || []);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast({ title: 'Error', description: 'Failed to load users', variant: 'destructive' });
+    }
+  };
+
+  // Load data based on section
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        if (section === 'Dashboard') {
+          await Promise.all([fetchStats(), fetchActivities()]);
+        } else if (section === 'Pending Cooks') {
+          const cooks = await fetchCooks('PENDING');
+          setPendingCooks(cooks);
+        } else if (section === 'Verified Cooks') {
+          const cooks = await fetchCooks('VERIFIED');
+          setVerifiedCooks(cooks);
+        } else if (section === 'Rejected Cooks') {
+          const cooks = await fetchCooks('REJECTED');
+          setRejectedCooks(cooks);
+        } else if (section === 'User Management') {
+          await fetchUsers();
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [section]);
+
+  // Update cook status
+  const updateCookStatus = async (cookId, newStatus) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/admin/cooks/${cookId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update cook status');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        toast({ title: 'Success', description: data.message });
+        // Reload current section
+        if (section === 'Pending Cooks') {
+          const cooks = await fetchCooks('PENDING');
+          setPendingCooks(cooks);
+        } else if (section === 'Verified Cooks') {
+          const cooks = await fetchCooks('VERIFIED');
+          setVerifiedCooks(cooks);
+        } else if (section === 'Rejected Cooks') {
+          const cooks = await fetchCooks('REJECTED');
+          setRejectedCooks(cooks);
+        }
+        // Refresh stats
+        await fetchStats();
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
   };
 
   const acceptCook = (id) => {
-    const item = pendingCooks.find(c => c.id === id);
-    if (!item) return;
-    setPendingCooks(pendingCooks.filter(c => c.id !== id));
-    setVerifiedCooks([item, ...verifiedCooks]);
+    updateCookStatus(id, 'VERIFIED');
   };
 
   const rejectCook = (id) => {
-    const item = pendingCooks.find(c => c.id === id);
-    if (!item) return;
-    setPendingCooks(pendingCooks.filter(c => c.id !== id));
-    setRejectedCooks([item, ...rejectedCooks]);
+    updateCookStatus(id, 'REJECTED');
   };
 
-  const moveToPending = (id, from) => {
-    if (from === 'verified') {
-      const item = verifiedCooks.find(c => c.id === id);
-      if (!item) return;
-      setVerifiedCooks(verifiedCooks.filter(c => c.id !== id));
-      setPendingCooks([item, ...pendingCooks]);
-    } else if (from === 'rejected') {
-      const item = rejectedCooks.find(c => c.id === id);
-      if (!item) return;
-      setRejectedCooks(rejectedCooks.filter(c => c.id !== id));
-      setPendingCooks([item, ...pendingCooks]);
-    }
+  const moveToPending = (id) => {
+    updateCookStatus(id, 'PENDING');
   };
 
   const renderDashboard = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Cooks" value={totals.totalCooks} />
-        <StatCard label="Pending Cooks" value={totals.pendingCooks} />
-        <StatCard label="Verified Cooks" value={totals.verifiedCooks} />
-        <StatCard label="Total Users" value={totals.totalUsers} />
+        <StatCard label="Total Cooks" value={stats.totalCooks} loading={loading} />
+        <StatCard label="Pending Cooks" value={stats.pendingCooks} loading={loading} />
+        <StatCard label="Verified Cooks" value={stats.verifiedCooks} loading={loading} />
+        <StatCard label="Total Users" value={stats.totalUsers} loading={loading} />
       </div>
       <Card>
         <CardHeader>
           <CardTitle>Recent Activities</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="list-disc pl-5 space-y-2">
-            {baseData.recentActivities.map(item => (
-              <li key={item.id} className="text-sm text-gray-700">{item.text}</li>
-            ))}
-          </ul>
+          {loading ? (
+            <p className="text-sm text-gray-500">Loading activities...</p>
+          ) : activities.length === 0 ? (
+            <p className="text-sm text-gray-500">No recent activities</p>
+          ) : (
+            <ul className="list-disc pl-5 space-y-2">
+              {activities.map(item => (
+                <li key={item.id} className="text-sm text-gray-700">{item.text}</li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -106,13 +218,18 @@ const AdminDashboard = () => {
         <CardTitle className="text-base">{section}</CardTitle>
       </CardHeader>
       <CardContent>
-        {list.length === 0 ? (
+        {loading ? (
+          <p className="text-sm text-gray-500">Loading...</p>
+        ) : list.length === 0 ? (
           <p className="text-sm text-gray-500">No records</p>
         ) : (
           <ul className="divide-y">
             {list.map((c) => (
               <li key={c.id} className="flex items-center justify-between py-3">
-                <span className="text-sm">{c.name}</span>
+                <div className="flex-1">
+                  <span className="text-sm font-medium">{c.name}</span>
+                  <p className="text-xs text-gray-500">{c.email}</p>
+                </div>
                 <div className="flex gap-2">
                   {kind === 'pending' && (
                     <>
@@ -121,10 +238,10 @@ const AdminDashboard = () => {
                     </>
                   )}
                   {kind === 'verified' && (
-                    <Button size="sm" variant="outline" onClick={() => moveToPending(c.id, 'verified')}>Move to Pending</Button>
+                    <Button size="sm" variant="outline" onClick={() => moveToPending(c.id)}>Move to Pending</Button>
                   )}
                   {kind === 'rejected' && (
-                    <Button size="sm" variant="outline" onClick={() => moveToPending(c.id, 'rejected')}>Move to Pending</Button>
+                    <Button size="sm" variant="outline" onClick={() => moveToPending(c.id)}>Move to Pending</Button>
                   )}
                 </div>
               </li>
@@ -135,23 +252,139 @@ const AdminDashboard = () => {
     </Card>
   );
 
-  const renderUsers = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Users</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ul className="divide-y">
-          {baseData.users.map(u => (
-            <li key={u.id} className="flex items-center justify-between py-3">
-              <span className="text-sm">{u.name}</span>
-              <Button size="sm" variant="outline">View</Button>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-    </Card>
-  );
+  // Verify cook from user management
+  const verifyCook = async (cookId) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/admin/users/${cookId}/verify`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to verify cook');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        toast({ title: 'Success', description: data.message });
+        // Reload users list
+        await fetchUsers();
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  const renderUsers = () => {
+    // Separate users by role
+    const students = users.filter(u => u.role === 'STUDENT');
+    const cooks = users.filter(u => u.role === 'COOK');
+
+    return (
+      <div className="space-y-6">
+        {/* Cooks Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Cooks ({cooks.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-sm text-gray-500">Loading...</p>
+            ) : cooks.length === 0 ? (
+              <p className="text-sm text-gray-500">No cooks found</p>
+            ) : (
+              <ul className="divide-y">
+                {cooks.map(u => {
+                  const status = u.status || 'PENDING';
+                  const statusColors = {
+                    'VERIFIED': 'bg-green-100 text-green-800',
+                    'PENDING': 'bg-yellow-100 text-yellow-800',
+                    'REJECTED': 'bg-red-100 text-red-800'
+                  };
+                  
+                  return (
+                    <li key={u.id} className="flex items-center justify-between py-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">{u.name}</span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[status] || 'bg-gray-100 text-gray-800'}`}>
+                            {status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500">{u.email}</p>
+                        {u.aadharNumber && (
+                          <p className="text-xs text-gray-400 mt-1">Aadhar: {u.aadharNumber}</p>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        {status === 'PENDING' && (
+                          <Button 
+                            size="sm" 
+                            className="bg-[#28b26f] hover:bg-[#28b26f]/90"
+                            onClick={() => verifyCook(u.id)}
+                          >
+                            Verify
+                          </Button>
+                        )}
+                        {status === 'VERIFIED' && (
+                          <span className="text-xs text-green-600 font-medium">Verified</span>
+                        )}
+                        {status === 'REJECTED' && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => verifyCook(u.id)}
+                          >
+                            Verify
+                          </Button>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Students Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Students ({students.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-sm text-gray-500">Loading...</p>
+            ) : students.length === 0 ? (
+              <p className="text-sm text-gray-500">No students found</p>
+            ) : (
+              <ul className="divide-y">
+                {students.map(u => (
+                  <li key={u.id} className="flex items-center justify-between py-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">{u.name}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                          STUDENT
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500">{u.email}</p>
+                      {u.foodPreference && (
+                        <p className="text-xs text-gray-400 mt-1">Preference: {u.foodPreference}</p>
+                      )}
+                    </div>
+                    <Button size="sm" variant="outline">View</Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   const content = () => {
     switch (section) {
@@ -175,7 +408,11 @@ const AdminDashboard = () => {
       <header className="bg-white border-b">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-semibold">Admin Panel</h1>
-          <Button variant="outline" onClick={() => (window.location.href = '/')}>Back to Site</Button>
+          <Button variant="outline" onClick={() => {
+            if (typeof window !== 'undefined') {
+              window.location.replace('/');
+            }
+          }}>Back to Site</Button>
         </div>
       </header>
 
@@ -211,5 +448,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-
-

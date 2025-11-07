@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema({
     default: 'STUDENT',
   },
 
+  status: {
+    type: String,
+    enum: ['PENDING', 'VERIFIED', 'REJECTED'],
+    default: 'PENDING', // Default for new cooks
+  },
+
   foodPreference: {
     type: String,
     enum: ['VEG', 'NONVEG'],
