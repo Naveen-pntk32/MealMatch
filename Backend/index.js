@@ -18,12 +18,14 @@ const verifyToken = require("./routes/middleware/middleware");
 const addfood = require("./routes/addfood/route");
 const subscriptionRoute = require('./routes/sbuscribe/route');
 const getcook = require("./routes/getCooks/getCooks")
+const filterfood = require("./routes/filterfood/route");
 app.use("/api/register", regRoute);
 app.use("/api/login", loginRoute);
 app.use("/api/nearByCook", getCook);
 app.use("/api/addfood", addfood);
 app.use("/api/subscribe", subscriptionRoute);
 app.use("/api/getcook", getcook)
+app.use("/api/filterfood", filterfood);
 
 
 app.listen(process.env.PORT, () => {
