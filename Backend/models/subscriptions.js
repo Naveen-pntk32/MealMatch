@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const subscriptionSchema = new mongoose.Schema({
   cookId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Cook',
+    ref: 'User', // Changed from 'Cook' to 'User' since cooks are stored in User model
     required: true,
   },
   studentId: {

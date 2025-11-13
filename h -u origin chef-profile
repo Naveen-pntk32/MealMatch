@@ -1,0 +1,58 @@
+[33m8526325[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mchef-profile[m[33m)[m Added cook profile  feature functionality
+[33m0854519[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mchef-dashboard[m[33m)[m Merge pull request #12 from Naveen-pntk32/chef-dashboard
+[33me023631[m[33m ([m[1;31morigin/chef-dashboard[m[33m)[m Added login page functionality
+[33mc80dadc[m[33m ([m[1;32mfeature-login[m[33m)[m Added login feature functionality
+[33m068a8a4[m[33m ([m[1;32mmain[m[33m)[m Update index.js
+[33m3eeabf2[m Update run-app.sh
+[33m7a8e460[m Merge pull request #11 from Arul3011/add/run-script
+[33m31b576b[m add a script file to run the both frontend and backend
+[33md87ee9b[m Merge pull request #10 from Arul3011/fix/payment-handel
+[33m4ad1988[m fix the bug in the payment page
+[33meaa9f89[m Merge pull request #9 from Arul3011/finished/backend
+[33m9de534c[m completed backend
+[33me58db78[m Merge pull request #8 from Arul3011/complet/frontend
+[33m17b0fd8[m completed frontend
+[33mcb70f56[m Merge pull request #7 from Arul3011/main
+[33mbab083e[m Update route.js
+[33m9ac864f[m Merge pull request #6 from Arul3011/main
+[33m9941f40[m Update route.js
+[33me15e4b4[m Merge pull request #5 from Arul3011/main
+[33m104ff1c[m Update route.js
+[33me69e67b[m add payment
+[33m3f1629c[m Merge pull request #4 from Arul3011/main
+[33mecf6d9c[m modfied the add food details page
+[33me2011f2[m modfied get cooks
+[33m298c37a[m modif the regiser page
+[33m84a97ae[m add addfoodroute subscribe route
+[33m0e88f54[m Merge pull request #3 from Arul3011/feature/payment
+[33mb3ce643[m Merge branch 'main' into feature/payment
+[33m17aef52[m add payment method
+[33m4d12b13[m Merge pull request #2 from Arul3011/auth
+[33m28ddcd7[m add subscriptions
+[33m6311733[m add/payment
+[33m9ea8a21[m Merge pull request #1 from Arul3011/auth
+[33m8980b40[m finish auth
+[33m5514c4a[m complited auth
+[33mdaa808c[m modfied auth
+[33m4686c27[m readme updated
+[33m41b4239[m final push
+[33ma67c80f[m delivery image added
+[33m105e5d2[m removed variety section
+[33m75c17e3[m ui change
+[33m340b614[m dish card added
+[33me7377bc[m ui change
+[33m3802a4f[m Vercel fix
+[33m1d5cc89[m Server issue :port fix
+[33mb305980[m Edit:Readme.md
+[33mfac4809[m first commit
+[33m98d8820[m Add new service to retrieve user data for the user profile page
+[33m4eecac3[m Add mock data for displaying cook profiles and meal plans
+[33mb5bb808[m Implement user authentication and role-based access control
+[33ma73f838[m Add student dashboard to view subscription and meal tracking
+[33m590a6ed[m Add cook profile page and improve login functionality
+[33mc43c62e[m Add a new homepage for a meal subscription service with featured cooks
+[33mb0a4112[m Add user authentication and role-based routing for secure access
+[33m3fe1547[m Add routing and mock data for a meal subscription service
+[33m61021a8[m Add functional frontend for meal subscription service
+[33m94ff4ba[m Add project overview and architecture details to Replit environment
+[33mab54628[m Initial commit

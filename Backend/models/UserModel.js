@@ -28,9 +28,27 @@ const userSchema = new mongoose.Schema({
     default: 'STUDENT',
   },
 
+  status: {
+    type: String,
+    enum: ['PENDING', 'VERIFIED', 'REJECTED'],
+    default: 'PENDING', // Default for new cooks
+  },
+
   foodPreference: {
     type: String,
     enum: ['VEG', 'NONVEG'],
+  },
+
+  profileImage: {
+    type: String,
+  },
+
+  aadharNumber: {
+    type: String,
+  },
+
+  aadharDocument: {
+    type: String,
   },
 
   location: {
@@ -40,7 +58,7 @@ const userSchema = new mongoose.Schema({
     },
     address: {
       type: String,
-      required: true, // optional if not always available
+      required: true,
     },
     coordinates: {
       lat: {
@@ -52,6 +70,13 @@ const userSchema = new mongoose.Schema({
         required: true,
       },
     },
+  },
+
+  // 🟡 New Field Added
+  status: {
+    type: String,
+    enum: ['ACTIVE', 'SUSPENDED'],
+    default: 'ACTIVE',
   },
 
   createdAt: {

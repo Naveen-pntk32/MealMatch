@@ -44,7 +44,7 @@ const StudentDashboard = () => {
         // Fetch subscription details for this student
         const uid = await localStorage.getItem("uid")
         const subRes = await fetch(
-          `http://localhost:3000/api/subscribe/student/${uid}`
+          `http://localhost:3000api/subscribe/student/${uid}`
         );
         const subscriptionData = await subRes.json();
         setSubscription(subscriptionData.subscription);
@@ -52,7 +52,7 @@ const StudentDashboard = () => {
         // Fetch cook + menu data
         if (subscriptionData?.subscription?.cookId) {
           const cookRes = await fetch(
-            `http://localhost:3000/api/getcook/full/${subscriptionData.subscription.cookId}`
+            `http://localhost:3000api/getcook/full/${subscriptionData.subscription.cookId}`
           );
           const data = await cookRes.json();
           setCook(data.cook);
@@ -88,11 +88,11 @@ const StudentDashboard = () => {
     navigate("/");
   };
 
-  // ✅ Get today’s meal from menu object
+  // ✅ Get today's meal from menu object
   const getTodaysMeal = () => {
     if (!menu) return null;
     const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
-    return menu[today] || null;
+    return menu[today]?.dish || null;
   };
 
   const getDeliveryStatus = () => {
@@ -326,7 +326,8 @@ const StudentDashboard = () => {
                             >
                               {day}
                             </p>
-                            <p className="text-sm text-gray-600">{menu[day]}</p>
+                            <p className="text-sm text-gray-600">{menu[day]?.dish}</p>
+                            <p className="text-xs text-gray-500">{menu[day]?.description}</p>
                           </div>
                         </div>
                         {isToday && (

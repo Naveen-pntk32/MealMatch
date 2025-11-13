@@ -47,10 +47,10 @@ const CookProfilePage = () => {
       try {
         setIsLoading(true);
 
-        const cookRes = await axios.get(`http://localhost:3000/api/register/user/${id}`);
+        const cookRes = await axios.get(`http://localhost:3000api/register/user/${id}`);
         setCook(cookRes.data);
 
-        const menuRes = await axios.get(`http://localhost:3000/api/addfood/${id}`);
+        const menuRes = await axios.get(`http://localhost:3000api/addfood/${id}`);
         const menuData = menuRes.data.menu;
 
         // Extract price
@@ -110,7 +110,7 @@ const CookProfilePage = () => {
     const studentId = await localStorage.getItem('uid');
      
     if (studentId ) {
-      const check = await fetch(`http://localhost:3000/api/subscribe/check/${studentId}`);
+      const check = await fetch(`http://localhost:3000api/subscribe/check/${studentId}`);
       const checkData = await check.json();
       if (checkData.check) {
         toast({
@@ -169,7 +169,7 @@ const CookProfilePage = () => {
     nextMonth.setMonth(today.getMonth() + 1);
 
   //  try {
-const res = await fetch("http://localhost:3000/api/subscribe", {
+const res = await fetch("http://localhost:3000api/subscribe", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",

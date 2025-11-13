@@ -7,10 +7,10 @@ echo "🚀 Starting Frontend..."
 cd frontend
 
 if [ -d "node_modules" ]; then
-    echo "✅ node_modules exist."
+    echo "node_modules exist."
     npm run dev &
 else
-    echo "⚠️ node_modules not found. Installing dependencies..."
+    echo " node_modules not found. Installing dependencies..."
     npm install
     npm run dev &
 fi
